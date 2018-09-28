@@ -14,3 +14,6 @@ Objectives:
 
 Language : C,C++
 
+
+Resources used:  
+  1. RFC 821, SMTP protocol, https://tools.ietf.org/html/rfc821  
