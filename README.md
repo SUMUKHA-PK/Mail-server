@@ -1,7 +1,7 @@
 # Mail-server
 
-Prerequisites: 
- 1.Knowledge on SMTP (Kurose and Ross, RFC for SMTP)
+Prerequisites:   
+ 1.Knowledge on SMTP (Kurose and Ross, RFC for SMTP)  
 
 Basis : C-S architecture. 
 
