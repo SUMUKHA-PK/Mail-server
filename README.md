@@ -27,17 +27,17 @@ About the protocol:
   2. A network consists of mutually-TCP-accessible hosts on the public internet. Using SMTP one process can transfer mail to       another process via a gateway or relay process which is accessible to both networks.
   3. The mail may pass through many intermediate hosts and reach the ultimate recipient.
   4. The basic design is as follows - 
-                 +----------+                +----------+
-      +------+    |          |                |          |
-      | User |<-->|          |      SMTP      |          |
-      +------+    |  Client- |Commands/Replies| Server-  |
-      +------+    |   SMTP   |<-------------->|    SMTP  |    +------+
-      | File |<-->|          |    and Mail    |          |<-->| File |
-      |System|    |          |                |          |    |System|
-      +------+    +----------+                +----------+    +------+
-                   SMTP client                SMTP server
-                   
-                   
+                  +----------+                +----------+  
+      +------+    |          |                |          |  
+      | User |<-->|          |      SMTP      |          |  
+      +------+    |  Client- |Commands/Replies| Server-  |  
+      +------+    |   SMTP   |<-------------->|    SMTP  |    +------+  
+      | File |<-->|          |    and Mail    |          |<-->| File |  
+      |System|    |          |                |          |    |System|  
+      +------+    +----------+                +----------+    +------+  
+                   SMTP client                SMTP server  
+                     
+                     
    5. The client and server have a two way transmission channel established between them.
    6. The responsibility of an SMTP client is to transfer mail messages to one or more SMTP servers,or report its failure to do so.
    7. An SMTP client determines the address of an appropriate host running an SMTP server by resolving a destination domain name to either an intermediate Mail eXchanger host or a final target host.
