@@ -29,15 +29,15 @@ About the protocol:
   4. The basic design is as follows - 
   
   <pre>
-                                      +----------+                +----------+  
-                          +------+    |          |                |          |  
-                          | User |<-->|          |      SMTP      |          |  
-                          +------+    |  Client- |Commands/Replies| Server-  |  
-                          +------+    |   SMTP   |<-------------->|    SMTP  |    +------+  
-                          | File |<-->|          |    and Mail    |          |<-->| File |  
-                          |System|    |          |                |          |    |System|  
-                          +------+    +----------+                +----------+    +------+  
-                                      SMTP client                SMTP server  
+                                    +----------+                +----------+  
+                        +------+    |          |                |          |  
+                        | User |<-->|          |      SMTP      |          |  
+                        +------+    |  Client- |Commands/Replies| Server-  |  
+                        +------+    |   SMTP   |<-------------->|    SMTP  |    +------+  
+                        | File |<-->|          |    and Mail    |          |<-->| File |  
+                        |System|    |          |                |          |    |System|  
+                        +------+    +----------+                +----------+    +------+  
+                                    SMTP client                SMTP server  
                                 
       
   </pre>
