@@ -17,3 +17,4 @@ Language : C,C++
 
 Resources used:  
   1. RFC 821, SMTP protocol, https://tools.ietf.org/html/rfc821  
+  2. The latest RFC for SMTP protocol, RFC 5321, https://tools.ietf.org/html/rfc5321  (This will be used as it is the latest)  
