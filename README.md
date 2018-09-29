@@ -37,6 +37,15 @@ About the protocol:
       +------+    +----------+                +----------+    +------+  
                    SMTP client                SMTP server  
                      
+                   +----------+                +----------+  
+       +------+    |          |                |          |  
+       | User |<-->|          |     SMTP       |          |  
+       +------+    | Client-  |Commands/Replies| Server-  |  
+       +------+    |   SMTP   |<-------------->|    SMTP  |    +------+  
+       | File |<-->|          |    and Mail    |          |<-->| File |  
+       |System|    |          |                |          |    |System|  
+       +------+    +----------+                +----------+    +------+  
+                   SMTP client                  SMTP server   
                      
    5. The client and server have a two way transmission channel established between them.
    6. The responsibility of an SMTP client is to transfer mail messages to one or more SMTP servers,or report its failure to do so.
