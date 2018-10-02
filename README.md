@@ -63,5 +63,19 @@ This step of the procedure can be repeated any number of times. Server stores th
 Since the mail data is sent on the transmission channel, the end of mail data must be indicated so that the command and reply dialog can be resumed.  SMTP indicates the end of the mail data by sending a line containing only a "." (period or full stop).
    If there was no MAIL, or no RCPT, command, or all such commands were rejected, the server MAY return a "command out of sequence" (503) or    "no valid recipients" (554) reply in response to the DATA command. 
    21. While forwarding, one of the two following things may happen. One, the server may silently forward and return a 250 OK or 251 when there is an address change.Two, reject with 551 saying address updating is necessary or 550 with no address-specific information.
-  
- 
+   22. The _verify command_ : (VRFY) Verifies the user name(obtained as string input), if normal, a 250 response is given, 553 for ambiguos(user ambigous message).
+        Eg: 553- Ambiguous; Possibilities are
+            553-Joe Smith <jsmith@foo.com>
+            553-Harry Smith <hsmith@foo.com>
+            553 Melvin Smith <dweep@foo.com>
+   23. The EXPN command : Used to obtain the content of the mailing list. Here the input string identifies a mailing list and successful replies (250) may include full name of the users and must include mailboxes on the mailing list.  
+        Eg: The case of expanding a mailbox list requires a multiline reply, such as:
+            C: EXPN Example-People
+            S: 250-Jon Postel <Postel@isi.edu>
+            S: 250-Fred Fonebone <Fonebone@physics.foo-u.edu>
+            S: 250 Sam Q. Smith <SQSmith@specific.generic.com>
+                       or
+            C: EXPN Executive-Washroom-List
+            S: 550 Access Denied to You.
+   24. A server MUST NOT return 250 if all it has done is to verify that the syntax given is valid.  In that case, 502 (Command not implemented) or 500 (Syntax error, command unrecognized) SHOULD be returned. (For VRFY and EXPN)
+   25.  
