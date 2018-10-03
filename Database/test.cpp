@@ -4,11 +4,10 @@
 #include <cppconn/exception.h>
 #include <cppconn/resultset.h>
 #include <cppconn/statement.h>
-#include <termios.h>
-void echo_off(void);
-void echo_on(void);
-static struct termios stored_settings;
+#include "obtain_login.h"
+
 using namespace std;
+
 int main()
 {
   try {
@@ -17,21 +16,17 @@ int main()
   sql::Statement *stmt;
   sql::ResultSet *res;
 
-  string Username,password;
-  cout<<"Enter Username: ";
-  cin>>Username;
-  cout<<"Enter password: ";
-  echo_off();
-  cin>>password;
-  echo_on();
- 
+  string User_name,password;
+  User_name = Username();
+  password = Password();
+
   driver = get_driver_instance();                                       //Create a connection to mysql server
 
-  con = driver->connect("localhost", Username, password);
+  con = driver->connect("localhost", User_name, password);
   con->setSchema("SCA");                                                /* Connect to the MySQL test database */
 
   stmt = con->createStatement();
-  res = stmt->executeQuery("SELECT 'Hello World!' AS _message");        // replace with your statement
+  res = stmt->executeQuery("CREATE DATABASE impk1");        // replace with your statement
   while (res->next()) {
     cout << "\n... MySQL replies: ";
     cout << res->getString("_message") << endl;                         /* Access column data by alias or column name */
@@ -49,22 +44,5 @@ int main()
   cout << " (MySQL error code: " << e.getErrorCode();
   cout << ", SQLState: " << e.getSQLState() << " )" << endl;
 }
-
   return 0;
-}
-
-void echo_off(void)                                                    //Switches off Echo for password
-{
-  struct termios new_settings;
-  tcgetattr(0,&stored_settings);
-  new_settings = stored_settings;
-  new_settings.c_lflag &= (~ECHO);
-  tcsetattr(0,TCSANOW,&new_settings);
-  return;
-} 
-
-void echo_on(void)                                                    //Switch echo bak on in the terminal
-{
-  tcsetattr(0,TCSANOW,&stored_settings);
-  return;
 }
