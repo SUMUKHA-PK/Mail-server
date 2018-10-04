@@ -1,7 +1,7 @@
 #include <my_global.h>
 #include <mysql.h>
 #include "obtain_login.h"
-
+void finish_with_error(MYSQL *con);
 int main(int argc, char **argv)
 {  
     MYSQL *con = mysql_init(NULL);
@@ -29,13 +29,42 @@ int main(int argc, char **argv)
         exit(1);
     }  
 
-    if (mysql_query(con, "CREATE DATABASE testdb")) 
+    if (mysql_query(con, "show databases")) 
     {
         fprintf(stderr, "%s\n", mysql_error(con));
+        printf("%ld products updated",(long) mysql_affected_rows(con));
         mysql_close(con);
         exit(1);
     }
 
+     MYSQL_RES *result = mysql_store_result(con);
+  
+  if (result == NULL) 
+  {
+      finish_with_error(con);
+  }
+
+  int num_fields = mysql_num_fields(result);
+
+  MYSQL_ROW row;
+  
+  while ((row = mysql_fetch_row(result))) 
+  { 
+      for(int i = 0; i < num_fields; i++) 
+      { 
+          printf("%s ", row[i] ? row[i] : "NULL"); 
+      } 
+          printf("\n"); 
+  }
+  
+  mysql_free_result(result);
+
     mysql_close(con);
     exit(0);
+}
+void finish_with_error(MYSQL *con)
+{
+  fprintf(stderr, "%s\n", mysql_error(con));
+  mysql_close(con);
+  exit(1);        
 }

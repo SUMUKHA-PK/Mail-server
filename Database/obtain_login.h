@@ -9,6 +9,7 @@ string Username()
     cin>>username;
     return username;
 }
+
 string Password()
 {
     string password;

@@ -11,7 +11,7 @@ void echo_off(void)                                                    //Switche
   return;
 } 
 
-void echo_on(void)                                                    //Switch echo bak on in the terminal
+void echo_on(void)                                                    //Switch echo back on in the terminal
 {
   tcsetattr(0,TCSANOW,&stored_settings);
   return;

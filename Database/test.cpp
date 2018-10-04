@@ -26,7 +26,7 @@ int main()
   con->setSchema("SCA");                                                /* Connect to the MySQL test database */
 
   stmt = con->createStatement();
-  res = stmt->executeQuery("CREATE DATABASE impk1");        // replace with your statement
+  res = stmt->executeQuery("CREATE DATABASE impk1");                    // replace with your statement
   while (res->next()) {
     cout << "\n... MySQL replies: ";
     cout << res->getString("_message") << endl;                         /* Access column data by alias or column name */
