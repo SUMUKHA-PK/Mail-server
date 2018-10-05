@@ -79,4 +79,3 @@ Since the mail data is sent on the transmission channel, the end of mail data mu
        <br> C: EXPN Executive-Washroom-List
        <br> S: 550 Access Denied to You.
    24. A server MUST NOT return 250 if all it has done is to verify that the syntax given is valid.  In that case, 502 (Command not implemented) or 500 (Syntax error, command unrecognized) SHOULD be returned. (For VRFY and EXPN)
-   25.  
