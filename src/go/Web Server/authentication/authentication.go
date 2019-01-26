@@ -3,13 +3,11 @@ package authentication
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"net"
 	"strings"
 
-	"database/sql"
-
 	_ "../../mysql"
-	"../Database"
 	"../errorHandler"
 )
 
@@ -17,7 +15,7 @@ func Authentication(dbPass string) {
 
 	username := ""
 	password := ""
-	ack := 1
+	decider := ""
 
 	//Starting the backend server
 	link, err := net.Listen("tcp", "127.0.0.1:2345")
@@ -28,60 +26,64 @@ func Authentication(dbPass string) {
 		conn, err := link.Accept()
 		errorHandler.ErrorHandler(err)
 
-		// Get data from the client
-
-		scanner := bufio.NewScanner(conn)
-
-		for scanner.Scan() {
-			receive := scanner.Text()
-			username = receive
-			break
-		}
-		if errReadConn := scanner.Err(); errReadConn != nil {
-			panic(errReadConn)
-		}
-
-		scanner = bufio.NewScanner(strings.NewReader("success"))
-
-		for scanner.Scan() {
-			text := scanner.Text()
-			_, err := fmt.Fprintf(conn, text+"\n")
-			errorHandler.ErrorHandler(err)
-			break
-		}
-
-		scanner = bufio.NewScanner(conn)
-
-		for scanner.Scan() {
-			receive := scanner.Text()
-			password = receive
-			break
-		}
-		if errReadConn := scanner.Err(); errReadConn != nil {
-			panic(errReadConn)
-		}
+		// Get data from client
+		decider = getData(conn)
+		sendData(conn, "success")
+		username = getData(conn)
+		sendData(conn, "success")
+		password = getData(conn)
 
 		if (username == "") || (password == "") {
-			ack = 0
-		}
-
-		scanner = bufio.NewScanner(strings.NewReader(string(ack)))
-
-		for scanner.Scan() {
-			text := scanner.Text()
-			_, err := fmt.Fprintf(conn, text+"\n")
-			errorHandler.ErrorHandler(err)
+			sendData(conn, "invalid")
 			break
 		}
-		fmt.Printf("Username is %s and password is %s\n", username, password)
 
-		pass := "root:" + dbPass + "@/credentials"
-		db, err := sql.Open("mysql", pass)
+		fmt.Printf("Decider is %s, Username is %s and password is %s\n", decider, username, password)
 
+		if decider == "0" {
+			if SignUpHelper(dbPass, username, password) == 1 {
+				fmt.Printf("Successfully Signed Up user %s!\n", username)
+			} else {
+				fmt.Print("Error in signing up\n")
+			}
+		} else if decider == "1" {
+			if LoginHelper(dbPass, username, password) == 1 {
+				fmt.Printf("Successfully Logged in user %s!\n", username)
+			} else {
+				fmt.Print("Error in logging in\n")
+			}
+		} else {
+			sendData(conn, "invalid")
+			break
+		}
+	}
+}
+
+func getData(conn io.ReadWriter) string {
+
+	var receive string
+
+	scanner := bufio.NewScanner(conn)
+
+	for scanner.Scan() {
+		receive = scanner.Text()
+		break
+	}
+	if errReadConn := scanner.Err(); errReadConn != nil {
+		panic(errReadConn)
+	}
+
+	return receive
+}
+
+func sendData(conn io.ReadWriter, data string) {
+
+	scanner := bufio.NewScanner(strings.NewReader("success"))
+
+	for scanner.Scan() {
+		text := scanner.Text()
+		_, err := fmt.Fprintf(conn, text+"\n")
 		errorHandler.ErrorHandler(err)
-
-		x := Database.AuthenticateFromDb(db, username, password)
-
-		fmt.Printf("Value: %d", x)
+		break
 	}
 }
