@@ -20,9 +20,16 @@ func handlerFunc(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	// router := httprouter.New()
-	authentication.Authentication()
-	mux := &http.ServeMux{}
-	mux.HandleFunc("/", handlerFunc) // Path and function to go to // Path matching
-	fmt.Print("Serving on port 3000")
-	http.ListenAndServe(":3000", mux)
+	go func() {
+		authentication.Authentication()
+	}()
+	go func() {
+		mux := &http.ServeMux{}
+		mux.HandleFunc("/", handlerFunc) // Path and function to go to // Path matching
+		fmt.Print("Serving on port 3000")
+		http.ListenAndServe(":3000", mux)
+	}()
+
+	fmt.Scanln()
+	fmt.Print("Server shut down")
 }
