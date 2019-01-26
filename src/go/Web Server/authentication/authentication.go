@@ -6,7 +6,11 @@ import (
 	"net"
 	"strings"
 
+	"database/sql"
+
 	"../errorHandler"
+
+	_ "../../mysql"
 )
 
 func Authentication() {
@@ -70,5 +74,11 @@ func Authentication() {
 			break
 		}
 		fmt.Printf("Username is %s and password is %s\n", username, password)
+
+		db, err := sql.Open("mysql", "root:password@/credentials")
+
+		errorHandler.ErrorHandler(err)
+
+		fmt.Print(db)
 	}
 }
