@@ -8,12 +8,12 @@ import (
 
 	"database/sql"
 
-	"../errorHandler"
-
 	_ "../../mysql"
+	"../Database"
+	"../errorHandler"
 )
 
-func Authentication() {
+func Authentication(dbPass string) {
 
 	username := ""
 	password := ""
@@ -75,10 +75,13 @@ func Authentication() {
 		}
 		fmt.Printf("Username is %s and password is %s\n", username, password)
 
-		db, err := sql.Open("mysql", "root:password@/credentials")
+		pass := "root:" + dbPass + "@/credentials"
+		db, err := sql.Open("mysql", pass)
 
 		errorHandler.ErrorHandler(err)
 
-		fmt.Print(db)
+		x := Database.AuthenticateFromDb(db, username, password)
+
+		fmt.Printf("Value: %d", x)
 	}
 }
