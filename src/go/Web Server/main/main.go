@@ -12,6 +12,7 @@ func main() {
 	var dbPass string
 	fmt.Print("Enter the DB password: ")
 	fmt.Scan(&dbPass)
+	authentication.GetPass(dbPass)
 
 	go func() {
 		mux := &http.ServeMux{}
@@ -19,9 +20,9 @@ func main() {
 		fmt.Print("Web server Serving on port 3000\n")
 		http.ListenAndServe(":3000", mux)
 	}()
-	go func() {
-		authentication.Authentication(dbPass)
-	}()
+	// go func() {
+	// 	authentication.Authentication()
+	// }()
 
 	fmt.Scanln()
 	fmt.Scanln()

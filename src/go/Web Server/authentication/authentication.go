@@ -4,58 +4,78 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"net"
 	"strings"
 
 	_ "../../mysql"
 	"../errorHandler"
 )
 
-func Authentication(dbPass string) {
+var DBPass string
 
-	username := ""
-	password := ""
-	decider := ""
+func GetPass(dbPass string) {
+	DBPass = dbPass
+}
 
-	//Starting the backend server
-	link, err := net.Listen("tcp", "127.0.0.1:2345")
-	errorHandler.ErrorHandler(err)
+func Authentication(username string, password string, decider int) int {
 
-	for {
-		fmt.Print("Backend server active on port 2345\n")
-		conn, err := link.Accept()
-		errorHandler.ErrorHandler(err)
+	// username := ""
+	// password := ""
+	// decider := ""
 
-		// Get data from client
-		decider = getData(conn)
-		sendData(conn, "success")
-		username = getData(conn)
-		sendData(conn, "success")
-		password = getData(conn)
+	// //Starting the backend server
+	// link, err := net.Listen("tcp", "127.0.0.1:2345")
+	// errorHandler.ErrorHandler(err)
 
-		if (username == "") || (password == "") {
-			sendData(conn, "invalid")
-			break
-		}
+	// for {
+	// 	fmt.Print("Backend server active on port 2345\n")
+	// 	conn, err := link.Accept()
+	// 	errorHandler.ErrorHandler(err)
 
-		fmt.Printf("Decider is %s, Username is %s and password is %s\n", decider, username, password)
+	// 	// Get data from client
+	// 	decider = getData(conn)
+	// 	sendData(conn, "success")
+	// 	username = getData(conn)
+	// 	sendData(conn, "success")
+	// 	password = getData(conn)
 
-		if decider == "0" {
-			if SignUpHelper(dbPass, username, password) == 1 {
-				fmt.Printf("Successfully Signed Up user %s!\n", username)
-			} else {
-				fmt.Print("Error in signing up\n")
-			}
-		} else if decider == "1" {
-			if LoginHelper(dbPass, username, password) == 1 {
-				fmt.Printf("Successfully Logged in user %s!\n", username)
-			} else {
-				fmt.Print("Error in logging in\n")
-			}
+	// 	if (username == "") || (password == "") {
+	// 		sendData(conn, "invalid")
+	// 		break
+	// 	}
+
+	// 	fmt.Printf("Decider is %s, Username is %s and password is %s\n", decider, username, password)
+
+	// 	if decider == "0" {
+	// 		if SignUpHelper(dbPass, username, password) == 1 {
+	// 			fmt.Printf("Successfully Signed Up user %s!\n", username)
+	// 		} else {
+	// 			fmt.Print("Error in signing up\n")
+	// 		}
+	// 	} else if decider == "1" {
+	// 		if LoginHelper(dbPass, username, password) == 1 {
+	// 			fmt.Printf("Successfully Logged in user %s!\n", username)
+	// 		} else {
+	// 			fmt.Print("Error in logging in\n")
+	// 		}
+	// 	} else {
+	// 		sendData(conn, "invalid")
+	// 		break
+	// 	}
+	// }
+	if decider == 0 {
+		if SignUpHelper(DBPass, username, password) == 1 {
+			return 1
 		} else {
-			sendData(conn, "invalid")
-			break
+			return -1
 		}
+	} else if decider == 1 {
+		if LoginHelper(DBPass, username, password) == 1 {
+			return 2
+		} else {
+			return -2
+		}
+	} else {
+		return 0
 	}
 }
 
