@@ -10,11 +10,11 @@ func GetPass(dbPass string) {
 	DBPass = dbPass
 }
 
-func Authentication(username string, password string, decider int) int {
+func Authentication(username string, password string, decider int, otp string) int {
 
 	// Decider 0 for Signup, 1 for Login
 	if decider == 0 {
-		if SignUpHelper(DBPass, username, password) == 1 {
+		if SignUpHelper(DBPass, username, password, otp) == 1 {
 			return 1
 		} else {
 			return -1

@@ -7,7 +7,9 @@ import (
 	"../errorHandler"
 )
 
-func SignUpHelper(dbPass string, username string, password string) int {
+func SignUpHelper(dbPass string, username string, password string, otp string) int {
+
+	// Match OTP with the USER
 
 	pass := "root:" + dbPass + "@/credentials"
 	db, err := sql.Open("mysql", pass)

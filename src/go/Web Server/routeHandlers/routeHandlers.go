@@ -2,6 +2,7 @@ package routeHandlers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 
@@ -28,23 +29,28 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET" {
 		renderPage(w, "../webpages/authentication/signup.html")
+		fmt.Print("WTF")
 	} else if r.Method == "POST" {
 		r.ParseForm()
 
 		username := r.Form["username"]
 		password := r.Form["password"]
 
-		usernamestr := ""
-		passwordstr := ""
+		usernamestr := getString(username)
+		passwordstr := getString(password)
 
-		for i := 0; i < len(username); i++ {
-			usernamestr = usernamestr + username[i]
+		// We must get OTP from here
+		otp := "1234"
+
+		fmt.Printf("Username %s Passeord %s", usernamestr, passwordstr)
+
+		x := authentication.Authentication(usernamestr, passwordstr, 0, otp)
+
+		if x == 1 {
+			renderPage(w, "../webpages/static/signupLogin.html")
+		} else {
+			renderPage(w, "../webpages/static/signupFail.html")
 		}
-
-		for i := 0; i < len(password); i++ {
-			passwordstr = passwordstr + password[i]
-		}
-
 		// Things to do:
 		// 1. Redirect to a page where then can enter their phonenumber
 		// 2. Verify that phone number via OTP
@@ -65,16 +71,8 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		username := r.Form["username"]
 		password := r.Form["password"]
 
-		usernamestr := ""
-		passwordstr := ""
-
-		for i := 0; i < len(username); i++ {
-			usernamestr = usernamestr + username[i]
-		}
-
-		for i := 0; i < len(password); i++ {
-			passwordstr = passwordstr + password[i]
-		}
+		usernamestr := getString(username)
+		passwordstr := getString(password)
 
 		// If x is 1, then create session. else don't create session
 		// x := LoginHelper("dbPass", username, password)
@@ -83,7 +81,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		// Let us not put that authentication check in CreateSession.
 		//Because checking is something that the LoginHandler should do and not a CreateSession routine.
 
-		x := authentication.Authentication(usernamestr, passwordstr, 1)
+		x := authentication.Authentication(usernamestr, passwordstr, 1, "")
 
 		if x == 2 {
 			temp := sessionHandler.CreateSession(usernamestr, passwordstr)
@@ -106,10 +104,20 @@ func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 	} else if r.URL.Path == "/login.html" || r.URL.Path == "/login" {
 		loginHandler(w, r)
 
-	} else if r.URL.Path == "/signup.html" {
+	} else if r.URL.Path == "/signup.html" || r.URL.Path == "/signup" {
+		log.Print("CAME HERE")
 		signupHandler(w, r)
 	} else {
 		w.WriteHeader(http.StatusNotFound) // Status code 404
 		fmt.Fprint(w, "<h1>Error 404 : Page not found</h1>")
 	}
+}
+
+func getString(input []string) string {
+
+	result := ""
+	for i := 0; i < len(input); i++ {
+		result = result + input[i]
+	}
+	return result
 }
