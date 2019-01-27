@@ -7,9 +7,9 @@ import (
 
 	// "strings"
 	// "reflect"
-
+	"../authentication"
 	"../errorHandler"
-	//"../authentication"
+	"../sessionHandler"
 )
 
 func renderPage(w http.ResponseWriter, pageName string) {
@@ -81,12 +81,12 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 		// Let us first authenticate and check if that user exists or not. Only after that, let us create a session.
 		// Let us not put that authentication check in CreateSession.
-		//Because checking is something that the LoginHandler should do and not a CreateSession routine. 
-		
+		//Because checking is something that the LoginHandler should do and not a CreateSession routine.
 
-		x := 1
-		if x == 1 {
-			temp := CreateSession(usernamestr, passwordstr)
+		x := authentication.Authentication(usernamestr, passwordstr, 1)
+
+		if x == 2 {
+			temp := sessionHandler.CreateSession(usernamestr, passwordstr)
 			if temp == 2 {
 				renderPage(w, "../webpages/static/loggedin.html")
 			} else if temp == -2 {

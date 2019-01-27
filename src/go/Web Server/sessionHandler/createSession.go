@@ -1,10 +1,5 @@
-package routeHandlers
-
-import (
-	"../authentication"
-)
+package sessionHandler
 
 func CreateSession(username string, password string) int {
-	x := authentication.Authentication(username, password, 1)
-	return x
+	return 2 // Return SUCCESS on completion
 }

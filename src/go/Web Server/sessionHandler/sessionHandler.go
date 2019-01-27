@@ -1,9 +1,5 @@
 package sessionHandler
 
-import (
-	
-	"net/http"
-	"github.com/gorilla/sessions"
-)
+// "github.com/gorilla/sessions"
 
-var store = sessions.NewCookieStore(os.Getenv("SESSION_KE
+// var store = sessions.NewCookieStore(os.Getenv("SESSION_KE
