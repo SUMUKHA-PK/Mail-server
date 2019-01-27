@@ -3,7 +3,7 @@ package authentication
 import (
 	"database/sql"
 
-	"../Database"
+	"../database"
 	"../errorHandler"
 )
 

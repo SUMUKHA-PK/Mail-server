@@ -4,7 +4,7 @@
     </head>
 
     <body>
-        <form action="/login.go">
+        <form action="/login" method="post">
             <p> Username: 
                 <input type="text" name="username" size="40" maxlength="30" />
             </p>
@@ -12,6 +12,7 @@
                 Password: 
                 <input type="password" name="password" size="40" maxlength="40" /> 
             </p>
+            <input type="submit" name="Log In" value="Login"/>
         </form>
     </body>
 </html>
