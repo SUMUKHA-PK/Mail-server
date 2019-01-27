@@ -26,6 +26,37 @@ func renderPage(w http.ResponseWriter, pageName string) {
 }
 
 
+func signupHandler(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method == "GET" {
+		renderPage(w, "../webpages/authentication/signup.html")
+	} else if r.Method == "POST" {
+		r.ParseForm()
+
+		newusername := r.Form["username"]
+		newpassword := r.Form["password"]
+
+		usernamestr := ""
+		passwordstr := ""
+
+		for i:= 0; i < len(username); i++ {
+			usernamestr = usernamestr + username[i]
+		}
+
+		for i:= 0; i < len(password); i++ {
+			passwordstr = passwordstr + password[i]
+		}
+		
+		// Things to do: 
+		// 1. Redirect to a page where then can enter their phonenumber
+		// 2. Verify that phone number via OTP
+		// 3. If OTP Matches, add a DB entry of username and password
+		// 4. Then redirect them to the login page!
+
+	}
+}
+
+
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET"  {
@@ -71,7 +102,7 @@ func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 		loginHandler(w, r);
 	
 	} else if r.URL.Path == "/signup.html" {
-		renderPage(w, "../webpages/authentication/signup.html")
+		signupHandler(w, r)
 	} else {
 		w.WriteHeader(http.StatusNotFound) // Status code 404
 		fmt.Fprint(w, "<h1>Error 404 : Page not found</h1>")
