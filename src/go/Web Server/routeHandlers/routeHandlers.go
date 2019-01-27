@@ -79,6 +79,11 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		// If x is 1, then create session. else don't create session
 		// x := LoginHelper("dbPass", username, password)
 
+		// Let us first authenticate and check if that user exists or not. Only after that, let us create a session.
+		// Let us not put that authentication check in CreateSession.
+		//Because checking is something that the LoginHandler should do and not a CreateSession routine. 
+		
+
 		x := 1
 		if x == 1 {
 			temp := CreateSession(usernamestr, passwordstr)
