@@ -18,18 +18,15 @@ func renderPage(w http.ResponseWriter, pageName string) {
 	f, err := os.Open(pageName)
 	errorHandler.ErrorHandler(err)
 	b1 := make([]byte, 100000)
-	n1, err := f.Read(b1)
+	_, err = f.Read(b1)
 	errorHandler.ErrorHandler(err)
 	fmt.Fprintf(w, string(b1))
-	fmt.Printf("n1 = %d\n", n1)
-	// check(err)
 }
 
 func signupHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET" {
 		renderPage(w, "../webpages/authentication/signup.html")
-		fmt.Print("WTF")
 	} else if r.Method == "POST" {
 		r.ParseForm()
 
@@ -84,7 +81,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		x := authentication.Authentication(usernamestr, passwordstr, 1, "")
 
 		if x == 2 {
-			temp := sessionHandler.CreateSession(usernamestr, passwordstr)
+			temp := sessionHandler.CreateSession(w, r, usernamestr, passwordstr)
 			if temp == 2 {
 				renderPage(w, "../webpages/static/loggedin.html")
 			} else if temp == -2 {
@@ -98,15 +95,17 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandlerFunc(w http.ResponseWriter, r *http.Request) {
+	// Home page of server
 	if r.URL.Path == "/" {
 		renderPage(w, "../webpages/static/index.html")
-
+		log.Print("Routed to Home page\n")
+		// 2 paths :one hanldes the POST other handles the GET
 	} else if r.URL.Path == "/login.html" || r.URL.Path == "/login" {
 		loginHandler(w, r)
-
+		log.Print("Routed to Login page\n")
 	} else if r.URL.Path == "/signup.html" || r.URL.Path == "/signup" {
-		log.Print("CAME HERE")
 		signupHandler(w, r)
+		log.Print("Routed to Signup page\n")
 	} else {
 		w.WriteHeader(http.StatusNotFound) // Status code 404
 		fmt.Fprint(w, "<h1>Error 404 : Page not found</h1>")
