@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"../authentication"
+	"../authorisation"
 	"../routeHandlers"
 )
 
@@ -12,7 +12,7 @@ func main() {
 	var dbPass string
 	fmt.Print("Enter the DB password: ")
 	fmt.Scan(&dbPass)
-	authentication.GetPass(dbPass)
+	authorisation.GetPass(dbPass)
 
 	go func() {
 		mux := &http.ServeMux{}

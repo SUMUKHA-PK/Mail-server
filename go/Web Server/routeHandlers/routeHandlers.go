@@ -77,13 +77,14 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		x := authentication.Authentication(usernamestr, passwordstr, 1, "")
 
 		if x == 2 {
-			session := sessionHandler.CreateSession(w, r, usernamestr, passwordstr)
-			sessionHandler.SessionManager(session, w, r)
+			// session := sessionHandler.CreateSession(w, r, usernamestr, passwordstr)
+			// sessionHandler.SessionManager(session, w, r)
 			// if temp == 2 {
-			// 	renderPage(w, "../webpages/static/loggedin.html")
+			// renderPage(w, "../webpages/static/loggedin.html")
 			// } else if temp == -2 {
 			// 	renderPage(w, "../webpages/static/sessionInvalid.html")
 			// }
+			sessionHandler.SessionHandlerNew(w, r, usernamestr)
 		} else {
 			renderPage(w, "../webpages/static/loginfail.html")
 		}

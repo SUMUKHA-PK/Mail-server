@@ -1,13 +1,69 @@
-<html>
-    <head>
-        <title>Logged In</title>
-    </head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Logged in</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/assets/css/tachyons.css">
+</head>
+<body>
+<main class="flex flex-column min-vh-100"><!-- use flex to separate the layouts into diff sections. -->
+    <header class="w-100">
+        <div class="w-30 dib bg-washed-blue">
+            <a href="/" class="f3 f2-ns fw6 hover-blue link pointer black-80 dib ph3">CRUD</a>
+        </div><div class="w-70 dib">
+        <span class="f5 f3-ns fw3 ttu black-80 ph3">crud operations</span>
+    </div>
+        </div>
+    </header>
+    <section class="flex-auto flex flex-column flex-row-ns">
+        <div class="pv4 pv2-ns ph2 bg-light-gray tc w-30-ns">
+            <div class="dib">
+                <a href="/create" class="pv2 ph4 f6 fw3 fw6-ns hover-blue link pointer black-80 db">Create user</a>
+                <a href="/read" class="pv2 ph4 f6 fw3 fw6-ns hover-blue link pointer black-80 db">Read user</a>
+                <a href="/update" class="pv2 ph4 f6 fw3 fw6-ns hover-blue link pointer black-80 db">Update user</a>
+                <a href="/delete" class="pv2 ph4 f6 fw3 fw6-ns hover-blue link pointer black-80 db">Delete user</a>
+            </div>
+        </div>
+        <DIV class="pv4 pv2-ns ph2 bg-light-gray overflow-y-scroll w-70-ns"  style="background-image: linear-gradient(to right, rgba(30, 75, 115, 1), rgba(255, 255, 255, 0)">
+            <blockquote class="lh-copy">
+                <table >
 
-    <body>
-        <p>Success </p>
-        <a href="/login.html">LoginPage</a>
-    </br>
-        <a href="/">HomePage</a>
-    </body>
+                    <!-- Table header -->
 
+                    <thead>
+                    <tr>
+                        <th scope="col">From</th>
+                        <th scope="col">To</th>
+                        <th scope="col">Body</th>
+                    </tr>
+                    </thead>
+
+                    <!-- Table footer -->
+
+                    <tfoot>
+                    <tr>
+                        <td>END</td>
+                    </tr>
+                    </tfoot>
+
+                    <!-- Table body -->
+
+                    <tbody>
+                    {{ range . }}
+                    <tr>
+                        <td>{{ .From_addr }}</td>
+                        <td>{{ .To_addr }}</td>
+                        <td>{{ .Body }}</td>
+                    </tr>
+                    {{ end }}
+                    </tbody>
+
+                </table>
+            </blockquote>
+
+        </div>
+    </section>
+</main>
+</body>
 </html>

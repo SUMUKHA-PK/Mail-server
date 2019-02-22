@@ -3,7 +3,7 @@ package authentication
 import (
 	"database/sql"
 
-	"../database"
+	"../DB"
 	"../errorHandler"
 )
 
@@ -13,7 +13,7 @@ func LoginHelper(dbPass string, username string, password string) int {
 
 	errorHandler.ErrorHandler(err)
 
-	x := Database.AuthenticateLogin(db, username, password)
+	x := DB.AuthenticateLogin(db, username, password)
 
 	return x
 }

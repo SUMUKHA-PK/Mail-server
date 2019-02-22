@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"../database"
+	"../DB"
 	"../errorHandler"
 )
 
@@ -17,12 +17,12 @@ func SignUpHelper(dbPass string, username string, password string, otp string) i
 
 	errorHandler.ErrorHandler(err)
 
-	x := Database.AuthenticateSignUp(db, username, password)
+	x := DB.AuthenticateSignUp(db, username, password)
 
 	pass = "root:" + dbPass + "@/MailDB"
 	db, err = sql.Open("mysql", pass)
 
-	y := Database.AddTable(db, username)
+	y := DB.AddTable(db, username)
 
 	fmt.Print(x)
 	fmt.Print(y)
