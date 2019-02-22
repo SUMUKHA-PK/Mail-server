@@ -17,6 +17,18 @@ func AuthenticateSignUp(db *sql.DB, username string, password string) int {
 	return 1
 }
 
+func AddTable(db *sql.DB, username string) int {
+
+	user := "CREATE TABLE " + username + " (body LONGTEXT ,from_addr  VARCHAR(256) ,to_addr VARCHAR(256) ,inbox INT(2) ,sent INT(2) )"
+
+	_, err := db.Exec(user)
+
+	if err != nil {
+		return 0
+	}
+	return 1
+}
+
 func AuthenticateLogin(db *sql.DB, username string, password string) int {
 
 	cred := "SELECT username FROM Credentials WHERE username = \"" + username + "\" AND password = \"" + password + "\""

@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"os"
 
-	// "strings"
-	// "reflect"
 	"../authentication"
 	"../errorHandler"
 	"../sessionHandler"
@@ -38,8 +36,6 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 
 		// We must get OTP from here
 		otp := "1234"
-
-		fmt.Printf("Username %s Passeord %s", usernamestr, passwordstr)
 
 		x := authentication.Authentication(usernamestr, passwordstr, 0, otp)
 
@@ -81,12 +77,13 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		x := authentication.Authentication(usernamestr, passwordstr, 1, "")
 
 		if x == 2 {
-			temp := sessionHandler.CreateSession(w, r, usernamestr, passwordstr)
-			if temp == 2 {
-				renderPage(w, "../webpages/static/loggedin.html")
-			} else if temp == -2 {
-				renderPage(w, "../webpages/static/sessionInvalid.html")
-			}
+			session := sessionHandler.CreateSession(w, r, usernamestr, passwordstr)
+			sessionHandler.SessionManager(session, w, r)
+			// if temp == 2 {
+			// 	renderPage(w, "../webpages/static/loggedin.html")
+			// } else if temp == -2 {
+			// 	renderPage(w, "../webpages/static/sessionInvalid.html")
+			// }
 		} else {
 			renderPage(w, "../webpages/static/loginfail.html")
 		}
