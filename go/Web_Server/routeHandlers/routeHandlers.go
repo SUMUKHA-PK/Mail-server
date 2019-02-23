@@ -104,6 +104,9 @@ func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 	} else if r.URL.Path == "/signup.html" || r.URL.Path == "/signup" {
 		signupHandler(w, r)
 		log.Print("Routed to Signup page\n")
+	} else if r.URL.Path == "/compose.html" || r.URL.Path == "/compose" {
+		renderPage(w, "../webpages/static/compose.html")
+		log.Print("Routed to Signup page\n")
 	} else {
 		w.WriteHeader(http.StatusNotFound) // Status code 404
 		fmt.Fprint(w, "<h1>Error 404 : Page not found</h1>")
