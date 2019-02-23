@@ -2,6 +2,7 @@ package DB
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 )
 
@@ -12,6 +13,7 @@ func AuthenticateSignUp(db *sql.DB, username string, password string) int {
 	_, err := db.Exec(cred)
 
 	if err != nil {
+		fmt.Print(err)
 		return 0
 	}
 	return 1
@@ -21,9 +23,12 @@ func AddTable(db *sql.DB, username string) int {
 
 	user := "CREATE TABLE " + username + " (body LONGTEXT ,from_addr  VARCHAR(256) ,to_addr VARCHAR(256) ,inbox INT(2) ,sent INT(2) )"
 
+	fmt.Print(user)
+
 	_, err := db.Exec(user)
 
 	if err != nil {
+		fmt.Print(err)
 		return 0
 	}
 	return 1
