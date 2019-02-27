@@ -1,0 +1,5 @@
+package mailHandler
+
+func ReceiveHandler() {
+
+}

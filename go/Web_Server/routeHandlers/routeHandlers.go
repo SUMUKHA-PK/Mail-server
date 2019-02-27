@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"../DB"
 	"../authentication"
 	"../errorHandler"
 	"../mailHandler"
@@ -32,8 +33,8 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 		username := r.Form["username"]
 		password := r.Form["password"]
 
-		usernamestr := getString(username)
-		passwordstr := getString(password)
+		usernamestr := GetString(username)
+		passwordstr := GetString(password)
 
 		// We must get OTP from here
 		otp := "1234"
@@ -54,6 +55,12 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+type UserData struct {
+	Usernamestr string
+}
+
+var User UserData
+
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET" {
@@ -65,8 +72,8 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		username := r.Form["username"]
 		password := r.Form["password"]
 
-		usernamestr := getString(username)
-		passwordstr := getString(password)
+		User.Usernamestr = GetString(username)
+		passwordstr := GetString(password)
 
 		// If x is 1, then create session. else don't create session
 		// x := LoginHelper("dbPass", username, password)
@@ -75,7 +82,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		// Let us not put that authentication check in CreateSession.
 		//Because checking is something that the LoginHandler should do and not a CreateSession routine.
 
-		x := authentication.Authentication(usernamestr, passwordstr, 1, "")
+		x := authentication.Authentication(User.Usernamestr, passwordstr, 1, "")
 
 		if x == 2 {
 			// session := sessionHandler.CreateSession(w, r, usernamestr, passwordstr)
@@ -85,7 +92,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 			// } else if temp == -2 {
 			// 	renderPage(w, "../webpages/static/sessionInvalid.html")
 			// }
-			sessionHandler.SessionHandlerNew(w, r, usernamestr)
+			sessionHandler.SessionHandlerNew(w, r, User.Usernamestr, "1")
 		} else {
 			renderPage(w, "../webpages/static/loginfail.html")
 		}
@@ -107,16 +114,24 @@ func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 		log.Print("Routed to Signup page\n")
 	} else if r.URL.Path == "/compose.html" {
 		renderPage(w, "../webpages/static/compose.html")
-		log.Print("Routed to Signup page\n")
+		log.Print("Routed to Compose page\n")
 	} else if r.URL.Path == "/compose" {
-		mailHandler.ComposeHandler(w, r)
+		var data [][]string = mailHandler.ComposeHandler(w, r)
+		DB.UpdateDB(data)
+		sessionHandler.SessionHandlerNew(w, r, User.Usernamestr, "1")
+	} else if r.URL.Path == "/sentmail.html" {
+		sessionHandler.SessionHandlerNew(w, r, User.Usernamestr, "0")
+		log.Print("Routed to Sentmail page\n")
+	} else if r.URL.Path == "/loggedin.html" {
+		sessionHandler.SessionHandlerNew(w, r, User.Usernamestr, "1")
+		log.Print("Routed to loggedin page\n")
 	} else {
 		w.WriteHeader(http.StatusNotFound) // Status code 404
 		fmt.Fprint(w, "<h1>Error 404 : Page not found</h1>")
 	}
 }
 
-func getString(input []string) string {
+func GetString(input []string) string {
 
 	result := ""
 	for i := 0; i < len(input); i++ {

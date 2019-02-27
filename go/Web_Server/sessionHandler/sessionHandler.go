@@ -45,7 +45,7 @@ func renderPage(w http.ResponseWriter, pageName string) {
 	fmt.Fprintf(w, string(b1))
 }
 
-func SessionHandlerNew(w http.ResponseWriter, r *http.Request, username string) {
+func SessionHandlerNew(w http.ResponseWriter, r *http.Request, username string, decider string) {
 
 	var template *template.Template
 	template, err := template.ParseGlob("../webpages/static/*.html")
@@ -60,7 +60,7 @@ func SessionHandlerNew(w http.ResponseWriter, r *http.Request, username string) 
 
 	var emails []Email
 
-	rows := DB.GetEmails(username, "1")
+	rows := DB.GetEmails(username, decider)
 
 	for rows.Next() {
 		err = rows.Scan(&body, &from_addr, &to_addr, &inbox, &sent)
@@ -72,5 +72,9 @@ func SessionHandlerNew(w http.ResponseWriter, r *http.Request, username string) 
 
 		emails = append(emails, Email{Body: body, From_addr: from_addr, To_addr: to_addr, Inbox: inbox, Sent: sent})
 	}
-	template.ExecuteTemplate(w, "loggedin.html", emails)
+	if decider == "1" {
+		template.ExecuteTemplate(w, "loggedin.html", emails)
+	} else {
+		template.ExecuteTemplate(w, "sentmail.html", emails)
+	}
 }

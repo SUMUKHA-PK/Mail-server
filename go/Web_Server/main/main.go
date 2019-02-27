@@ -18,7 +18,7 @@ func main() {
 		mux := &http.ServeMux{}
 		mux.HandleFunc("/", routeHandlers.HandlerFunc) // Path and function to go to // Path matching
 		fmt.Print("Web server Serving on port 3000\n")
-		http.ListenAndServe("10.53.108.127:3000", mux)
+		http.ListenAndServe("10.53.70.237:3000", mux)
 	}()
 
 	fmt.Scanln()
