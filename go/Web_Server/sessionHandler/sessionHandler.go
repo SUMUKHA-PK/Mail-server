@@ -1,3 +1,9 @@
+/*
+Here are functions to manage already created sessions.
+
+This currently can get the email data and render pages on a template
+*/
+
 package sessionHandler
 
 import (
@@ -5,7 +11,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"os"
 
 	"../../sessions"
 	"../DB"
@@ -30,20 +35,13 @@ func SessionManager(session *sessions.Session, w http.ResponseWriter, r *http.Re
 
 }
 
-func HandlerFunc(w http.ResponseWriter, r *http.Request) {
-	// renderPage(w, "../webpages/static/loggedin.html")
-	fmt.Print(r.URL.Path)
-}
+/*
+SessionHandlerNew is currently a botched job.
 
-func renderPage(w http.ResponseWriter, pageName string) {
+It must be replaced with the above SessionManager and possibly a utility function that does the job of the below,
+along with managing the current session(Time outs, give user data to the invoking functions like Authorisers)
 
-	f, err := os.Open(pageName)
-	errorHandler.ErrorHandler(err)
-	b1 := make([]byte, 100000)
-	_, err = f.Read(b1)
-	errorHandler.ErrorHandler(err)
-	fmt.Fprintf(w, string(b1))
-}
+*/
 
 func SessionHandlerNew(w http.ResponseWriter, r *http.Request, username string, decider string) {
 

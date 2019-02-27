@@ -1,0 +1,103 @@
+/*
+This contains all the utility functions necesssary.
+
+This is done to remove recursive imports mainly.
+*/
+package util
+
+import (
+	"bufio"
+	"fmt"
+	"net"
+	"net/http"
+	"os"
+	"strings"
+
+	"../errorHandler"
+)
+
+/*
+RenderPage is used to Render any webpage when called
+*/
+
+func RenderPage(w http.ResponseWriter, pageName string) {
+
+	f, err := os.Open(pageName)
+	errorHandler.ErrorHandler(err)
+	b1 := make([]byte, 100000)
+	_, err = f.Read(b1)
+	errorHandler.ErrorHandler(err)
+	fmt.Fprintf(w, string(b1))
+}
+
+/*
+GetString returns a string type object from a []string type.
+
+Used in routeHandlers for getting FORM data
+*/
+
+func GetString(input []string) string {
+
+	result := ""
+	for i := 0; i < len(input); i++ {
+		result = result + input[i]
+	}
+	return result
+}
+
+/*
+GetStringArr gets the data from []string type , converts them based on []string is needed or string
+
+Used in routeHandler to obtain COMPOSE data
+*/
+
+func GetStringArr(input []string, decider int) []string {
+
+	var data []string
+	result := ""
+	for i := 0; i < len(input); i++ {
+		result = result + input[i]
+	}
+	if decider == 0 {
+		data = append(data, result)
+	} else {
+		data = strings.Split(result, ";")
+	}
+	return data
+}
+
+/*
+SendData and GetData are utility functions used to move data through sockets from a pre-existing connection
+
+Still work under progress
+*/
+
+func SendData(conn net.Conn, message []string) {
+
+	for i := 0; i < len(message); i++ {
+		scanner := bufio.NewScanner(strings.NewReader(message[i]))
+
+		for scanner.Scan() {
+			text := scanner.Text()
+			fmt.Print(text)
+			_, errWrite := fmt.Fprintf(conn, text+"\n")
+			errorHandler.ErrorHandler(errWrite)
+			break
+		}
+	}
+
+}
+
+func GetData(conn net.Conn) string {
+	var receive string
+	scanner := bufio.NewScanner(conn)
+	for scanner.Scan() {
+		receive = scanner.Text()
+		break
+	}
+	if errReadConn := scanner.Err(); errReadConn != nil {
+		fmt.Print(errReadConn)
+		return ""
+	}
+	return receive
+}

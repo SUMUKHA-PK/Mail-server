@@ -1,3 +1,7 @@
+/*
+File to create a new session.
+*/
+
 package sessionHandler
 
 import (
@@ -6,6 +10,11 @@ import (
 	"../../securecookie"
 	"../../sessions"
 )
+
+/*
+CreateSession returns a new session pointer by creating a new session or getting an existing one.
+Username and password are the credentials of the User
+*/
 
 func CreateSession(w http.ResponseWriter, r *http.Request, username string, password string) *sessions.Session {
 

@@ -4,37 +4,26 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"../DB"
 	"../authentication"
-	"../errorHandler"
 	"../mailHandler"
 	"../sessionHandler"
+	"../util"
 )
-
-func renderPage(w http.ResponseWriter, pageName string) {
-
-	f, err := os.Open(pageName)
-	errorHandler.ErrorHandler(err)
-	b1 := make([]byte, 100000)
-	_, err = f.Read(b1)
-	errorHandler.ErrorHandler(err)
-	fmt.Fprintf(w, string(b1))
-}
 
 func signupHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET" {
-		renderPage(w, "../webpages/authentication/signup.html")
+		util.RenderPage(w, "../webpages/authentication/signup.html")
 	} else if r.Method == "POST" {
 		r.ParseForm()
 
 		username := r.Form["username"]
 		password := r.Form["password"]
 
-		usernamestr := GetString(username)
-		passwordstr := GetString(password)
+		usernamestr := util.GetString(username)
+		passwordstr := util.GetString(password)
 
 		// We must get OTP from here
 		otp := "1234"
@@ -42,9 +31,9 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 		x := authentication.Authentication(usernamestr, passwordstr, 0, otp)
 
 		if x == 1 {
-			renderPage(w, "../webpages/static/signupLogin.html")
+			util.RenderPage(w, "../webpages/static/signupLogin.html")
 		} else {
-			renderPage(w, "../webpages/static/signupFail.html")
+			util.RenderPage(w, "../webpages/static/signupFail.html")
 		}
 		// Things to do:
 		// 1. Redirect to a page where then can enter their phonenumber
@@ -64,7 +53,7 @@ var User UserData
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET" {
-		renderPage(w, "../webpages/authentication/login.html")
+		util.RenderPage(w, "../webpages/authentication/login.html")
 	} else if r.Method == "POST" {
 		r.ParseForm()
 
@@ -72,8 +61,8 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		username := r.Form["username"]
 		password := r.Form["password"]
 
-		User.Usernamestr = GetString(username)
-		passwordstr := GetString(password)
+		User.Usernamestr = util.GetString(username)
+		passwordstr := util.GetString(password)
 
 		// If x is 1, then create session. else don't create session
 		// x := LoginHelper("dbPass", username, password)
@@ -88,13 +77,13 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 			// session := sessionHandler.CreateSession(w, r, usernamestr, passwordstr)
 			// sessionHandler.SessionManager(session, w, r)
 			// if temp == 2 {
-			// renderPage(w, "../webpages/static/loggedin.html")
+			// util.RenderPage(w, "../webpages/static/loggedin.html")
 			// } else if temp == -2 {
-			// 	renderPage(w, "../webpages/static/sessionInvalid.html")
+			// 	util.RenderPage(w, "../webpages/static/sessionInvalid.html")
 			// }
 			sessionHandler.SessionHandlerNew(w, r, User.Usernamestr, "1")
 		} else {
-			renderPage(w, "../webpages/static/loginfail.html")
+			util.RenderPage(w, "../webpages/static/loginfail.html")
 		}
 
 	}
@@ -103,7 +92,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 	// Home page of server
 	if r.URL.Path == "/" {
-		renderPage(w, "../webpages/static/index.html")
+		util.RenderPage(w, "../webpages/static/index.html")
 		log.Print("Routed to Home page\n")
 		// 2 paths :one hanldes the POST other handles the GET
 	} else if r.URL.Path == "/login.html" || r.URL.Path == "/login" {
@@ -113,29 +102,23 @@ func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 		signupHandler(w, r)
 		log.Print("Routed to Signup page\n")
 	} else if r.URL.Path == "/compose.html" {
-		renderPage(w, "../webpages/static/compose.html")
+		util.RenderPage(w, "../webpages/static/compose.html")
 		log.Print("Routed to Compose page\n")
 	} else if r.URL.Path == "/compose" {
 		var data [][]string = mailHandler.ComposeHandler(w, r)
 		DB.UpdateDB(data)
-		sessionHandler.SessionHandlerNew(w, r, User.Usernamestr, "1")
+		username := User.Usernamestr //Username must be obtained from the cookie not from the botched struct job
+		sessionHandler.SessionHandlerNew(w, r, username, "1")
 	} else if r.URL.Path == "/sentmail.html" {
-		sessionHandler.SessionHandlerNew(w, r, User.Usernamestr, "0")
+		username := User.Usernamestr //Username must be obtained from the cookie not from the botched struct job
+		sessionHandler.SessionHandlerNew(w, r, username, "0")
 		log.Print("Routed to Sentmail page\n")
 	} else if r.URL.Path == "/loggedin.html" {
-		sessionHandler.SessionHandlerNew(w, r, User.Usernamestr, "1")
+		username := User.Usernamestr //Username must be obtained from the cookie not from the botched struct job
+		sessionHandler.SessionHandlerNew(w, r, username, "1")
 		log.Print("Routed to loggedin page\n")
 	} else {
 		w.WriteHeader(http.StatusNotFound) // Status code 404
 		fmt.Fprint(w, "<h1>Error 404 : Page not found</h1>")
 	}
-}
-
-func GetString(input []string) string {
-
-	result := ""
-	for i := 0; i < len(input); i++ {
-		result = result + input[i]
-	}
-	return result
 }
