@@ -1,5 +1,0 @@
-package mailHandler
-
-func ReceiveHandler() {
-
-}
