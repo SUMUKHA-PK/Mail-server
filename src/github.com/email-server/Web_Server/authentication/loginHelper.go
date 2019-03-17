@@ -3,8 +3,8 @@ package authentication
 import (
 	"database/sql"
 
-	"../DB"
-	"../errorHandler"
+	"github.com/email-server/Web_Server/DB"
+	"github.com/email-server/Web_Server/errorHandler"
 )
 
 func LoginHelper(dbPass string, username string, password string) int {

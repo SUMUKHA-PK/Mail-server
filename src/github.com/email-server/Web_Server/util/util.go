@@ -14,7 +14,7 @@ import (
 	"os"
 	"strings"
 
-	"../errorHandler"
+	"github.com/email-server/Web_Server/errorHandler"
 )
 
 /*

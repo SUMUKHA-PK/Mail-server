@@ -12,9 +12,9 @@ import (
 	"log"
 	"net/http"
 
-	"../../sessions"
-	"../DB"
-	"../errorHandler"
+	"github.com/gorilla/sessions"
+	"github.com/email-server/Web_Server/DB"
+	"github.com/email-server/Web_Server/errorHandler"
 )
 
 type Email struct {

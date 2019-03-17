@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"../authorisation"
-	"../errorHandler"
+	"github.com/email-server/Web_Server/authorisation"
+	"github.com/email-server/Web_Server/errorHandler"
 )
 
 func GetEmails(username string, inbox string) *sql.Rows {

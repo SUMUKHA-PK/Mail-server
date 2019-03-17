@@ -5,11 +5,11 @@ import (
 	"log"
 	"net/http"
 
-	"../DB"
-	"../authentication"
-	"../mailHandler"
-	"../sessionHandler"
-	"../util"
+	"github.com/email-server/Web_Server/DB"
+	"github.com/email-server/Web_Server/authentication"
+	"github.com/email-server/Web_Server/mailHandler"
+	"github.com/email-server/Web_Server/sessionHandler"
+	"github.com/email-server/Web_Server/util"
 )
 
 func signupHandler(w http.ResponseWriter, r *http.Request) {

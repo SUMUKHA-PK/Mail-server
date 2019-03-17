@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"../DB"
-	"../errorHandler"
+	"github.com/email-server/Web_Server/DB"
+	"github.com/email-server/Web_Server/errorHandler"
 )
 
 func SignUpHelper(dbPass string, username string, password string, otp string) int {

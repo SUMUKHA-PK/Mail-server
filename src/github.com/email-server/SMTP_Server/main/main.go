@@ -6,7 +6,7 @@ import (
 	"net"
 	"strings"
 
-	"../../Web_Server/errorHandler"
+	"github.com/email-server/Web_Server/errorHandler"
 )
 
 func main() {

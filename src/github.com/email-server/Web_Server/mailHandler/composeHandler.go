@@ -3,7 +3,7 @@ package mailHandler
 import (
 	"net/http"
 
-	"../util"
+	"github.com/email-server/Web_Server/util"
 )
 
 func ComposeHandler(w http.ResponseWriter, r *http.Request) [][]string {

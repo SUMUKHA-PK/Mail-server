@@ -8,9 +8,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"../../securecookie"
-	"../../sessions"
-	"../util"
+	"github.com/gorilla/securecookie"
+	"github.com/gorilla/sessions"
+	"github.com/email-server/Web_Server/util"
 )
 
 /*

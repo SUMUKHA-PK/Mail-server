@@ -1,8 +1,8 @@
 package authentication
 
 import (
-	_ "../../mysql"
-	"../authorisation"
+	 _ "github.com/go-sql-driver/mysql"
+	"github.com/email-server/Web_Server/authorisation"
 )
 
 func Authentication(username string, password string, decider int, otp string) int {
