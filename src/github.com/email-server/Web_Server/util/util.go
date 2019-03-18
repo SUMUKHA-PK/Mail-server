@@ -18,6 +18,16 @@ import (
 )
 
 /*
+Has all the data a session of an User must have.
+*/
+
+type UserData struct {
+	LoggedIn string
+	UserName string
+	ID string
+} 
+
+/*
 RenderPage is used to Render any webpage when called
 */
 

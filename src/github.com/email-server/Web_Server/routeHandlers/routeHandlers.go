@@ -44,12 +44,10 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type UserData struct {
-	Usernamestr string
-}
+// This, though a global variable exists in its own thread when running, so is fine.
+var User util.UserData
 
-var User UserData
-
+// loginHandler handles authentication and session creation for every login
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET" {
@@ -61,24 +59,22 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		username := r.Form["username"]
 		password := r.Form["password"]
 
-		User.Usernamestr = util.GetString(username)
+		User.UserName = util.GetString(username)
 		passwordstr := util.GetString(password)
 
-		// Let us first authenticate and check if that user exists or not. Only after that, let us create a session.
-		// Let us not put that authentication check in CreateSession.
-		//Because checking is something that the LoginHandler should do and not a CreateSession routine.
-
-		x := authentication.Authentication(User.Usernamestr, passwordstr, 1, "")
-
+		x := authentication.Authentication(User.UserName, passwordstr, 1, "")
+		var sessionVar util.UserData
+		
 		if x == 2 {
-			session := sessionHandler.CreateSession(w, r, User.Usernamestr, passwordstr)
-			sessionHandler.SessionManager(session, w, r)
-			// if temp == 2 {
-			// util.RenderPage(w, "../webpages/static/loggedin.html")
-			// } else if temp == -2 {
-			// 	util.RenderPage(w, "../webpages/static/sessionInvalid.html")
-			// }
-			sessionHandler.SessionHandlerNew(w, r, User.Usernamestr, "1")
+			if sessionHandler.CheckActiveSession(r,User.UserName){
+				log.Println("Found an active session")
+				sessionVar = sessionHandler.GetActiveSession(User.UserName)
+			} else {
+				log.Println("Creating a new session")
+				sessionVar = sessionHandler.CreateSession(w,User.UserName)
+			}
+			fmt.Println(sessionVar)
+			sessionHandler.SessionHandlerNew(w, r, User.UserName, "1")
 		} else {
 			util.RenderPage(w, "../webpages/static/loginfail.html")
 		}
@@ -86,10 +82,16 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// logoutHandler renders the logout page (home page) on button click
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
+	user,err := DB.CheckActiveSession(User.UserName)
+	if user!=nil && err==nil {
+		sessionHandler.DestroySession(w,user)
+	}
 	util.RenderPage(w, "../webpages/static/index.html")
 }
 
+// HandlerFunc is the main route handler function that routes to different paths
 func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 	// Home page of server
 	if r.URL.Path == "/" {
@@ -108,14 +110,14 @@ func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 	} else if r.URL.Path == "/compose" {
 		var data [][]string = mailHandler.ComposeHandler(w, r)
 		DB.UpdateDB(data)
-		username := User.Usernamestr //Username must be obtained from the cookie not from the botched struct job
+		username := User.UserName //Username must be obtained from the cookie not from the botched struct job
 		sessionHandler.SessionHandlerNew(w, r, username, "1")
 	} else if r.URL.Path == "/sentmail.html" {
-		username := User.Usernamestr //Username must be obtained from the cookie not from the botched struct job
+		username := User.UserName //Username must be obtained from the cookie not from the botched struct job
 		sessionHandler.SessionHandlerNew(w, r, username, "0")
 		log.Print("Routed to Sentmail page\n")
 	} else if r.URL.Path == "/loggedin.html" {
-		username := User.Usernamestr //Username must be obtained from the cookie not from the botched struct job
+		username := User.UserName //Username must be obtained from the cookie not from the botched struct job
 		sessionHandler.SessionHandlerNew(w, r, username, "1")
 		log.Print("Routed to loggedin page\n")
 	} else if r.URL.Path == "/logout" {
