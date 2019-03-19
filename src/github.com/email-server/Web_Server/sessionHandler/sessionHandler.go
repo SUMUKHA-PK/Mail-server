@@ -67,7 +67,6 @@ func SessionHandlerNew(w http.ResponseWriter, r *http.Request, username string, 
 			http.Error(w, "there was an error", http.StatusInternalServerError)
 			return
 		}
-
 		emails = append(emails, Email{Body: body, From_addr: from_addr, To_addr: to_addr, Inbox: inbox, Sent: sent})
 	}
 	if decider == "1" {

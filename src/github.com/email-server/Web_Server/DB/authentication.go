@@ -68,7 +68,7 @@ func AuthenticateLogin(db *sql.DB, username string, password string) int {
 	return 1
 }
 
-// Checks the existance of a session entry in the DB for the username
+// Checks the existance of a session entry in the DB for the active sessions
 // Returns empty array and / or error on invalid queries
 
 func CheckActiveSession() ([]util.UserData, error) {

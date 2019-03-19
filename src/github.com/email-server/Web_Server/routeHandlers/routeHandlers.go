@@ -54,8 +54,6 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		util.RenderPage(w, "../webpages/authentication/login.html")
 	} else if r.Method == "POST" {
 		r.ParseForm()
-
-		//authentication.LoginHelper("dbPass", )
 		username := r.Form["username"]
 		password := r.Form["password"]
 
@@ -66,10 +64,6 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		var sessionVar util.UserData
 		
 		if x == 2 {
-			// if sessionHandler.CheckActiveSession(r,User.UserName){
-			// 	log.Println("Found an active session")
-			// 	sessionVar = sessionHandler.GetActiveSession(User.UserName)
-			// } else {
 			log.Println("Creating a new session")
 			sessionVar = sessionHandler.CreateSession(w,User.UserName)
 			fmt.Println(sessionVar)
@@ -77,7 +71,6 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		} else {
 			util.RenderPage(w, "../webpages/static/loginfail.html")
 		}
-
 	}
 }
 
@@ -116,14 +109,14 @@ func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 	} else if r.URL.Path == "/compose" {
 		var data [][]string = mailHandler.ComposeHandler(w, r)
 		DB.UpdateDB(data)
-		username := User.UserName //Username must be obtained from the cookie not from the botched struct job
+		username := User.UserName
 		sessionHandler.SessionHandlerNew(w, r, username, "1")
 	} else if r.URL.Path == "/sentmail.html" {
-		username := User.UserName //Username must be obtained from the cookie not from the botched struct job
+		username := User.UserName
 		sessionHandler.SessionHandlerNew(w, r, username, "0")
 		log.Print("Routed to Sentmail page\n")
 	} else if r.URL.Path == "/loggedin.html" {
-		username := User.UserName //Username must be obtained from the cookie not from the botched struct job
+		username := User.UserName
 		sessionHandler.SessionHandlerNew(w, r, username, "1")
 		log.Print("Routed to loggedin page\n")
 	} else if r.URL.Path == "/logout" {
