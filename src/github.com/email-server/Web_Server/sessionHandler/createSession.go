@@ -43,7 +43,7 @@ returns false.
 */
 func CheckActiveSession(r *http.Request, username string) bool {
 
-	userData,err:= DB.CheckActiveSession(username)
+	userData,err:= DB.CheckActiveSession()
 	if err==nil && userData!=nil{
 		cookie, _ :=r.Cookie(userData[0].ID)
 		if cookie.Value == userData[0].UserName {

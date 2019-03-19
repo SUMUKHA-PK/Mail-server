@@ -66,13 +66,12 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		var sessionVar util.UserData
 		
 		if x == 2 {
-			if sessionHandler.CheckActiveSession(r,User.UserName){
-				log.Println("Found an active session")
-				sessionVar = sessionHandler.GetActiveSession(User.UserName)
-			} else {
-				log.Println("Creating a new session")
-				sessionVar = sessionHandler.CreateSession(w,User.UserName)
-			}
+			// if sessionHandler.CheckActiveSession(r,User.UserName){
+			// 	log.Println("Found an active session")
+			// 	sessionVar = sessionHandler.GetActiveSession(User.UserName)
+			// } else {
+			log.Println("Creating a new session")
+			sessionVar = sessionHandler.CreateSession(w,User.UserName)
 			fmt.Println(sessionVar)
 			sessionHandler.SessionHandlerNew(w, r, User.UserName, "1")
 		} else {
@@ -84,7 +83,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 // logoutHandler renders the logout page (home page) on button click
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
-	user,err := DB.CheckActiveSession(User.UserName)
+	user,err := DB.CheckActiveSession()
 	if user!=nil && err==nil {
 		sessionHandler.DestroySession(w,user)
 	}
@@ -95,9 +94,16 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 	// Home page of server
 	if r.URL.Path == "/" {
-		util.RenderPage(w, "../webpages/static/index.html")
-		log.Print("Routed to Home page\n")
-		// 2 paths :one hanldes the POST other handles the GET
+		if sessionHandler.CheckActiveSession(r,User.UserName){
+			log.Println("Found an active session")
+			sessionVar := sessionHandler.GetActiveSession(User.UserName)
+			fmt.Println(sessionVar)
+			sessionHandler.SessionHandlerNew(w,r,sessionVar.UserName,"1")
+		}else{
+			util.RenderPage(w, "../webpages/static/index.html")
+			log.Print("Routed to Home page\n")
+		}
+		// 2 paths :one handles the POST other handles the GET
 	} else if r.URL.Path == "/login.html" || r.URL.Path == "/login" {
 		loginHandler(w, r)
 		log.Print("Routed to Login page\n")

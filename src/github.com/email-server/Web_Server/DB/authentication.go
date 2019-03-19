@@ -71,14 +71,14 @@ func AuthenticateLogin(db *sql.DB, username string, password string) int {
 // Checks the existance of a session entry in the DB for the username
 // Returns empty array and / or error on invalid queries
 
-func CheckActiveSession(username string) ([]util.UserData, error) {
+func CheckActiveSession() ([]util.UserData, error) {
 
 	dbPass := authorisation.ObtainPass()
 	pass := "root:" + dbPass + "@/MailDB"
 	db, err := sql.Open("mysql", pass)
 	errorHandler.ErrorHandler(err)
 
-	query := "SELECT * FROM sessions WHERE username=\"" + username + "\""
+	query := "SELECT * FROM sessions WHERE loggedIn = \"true\""
 	
 	fmt.Println(query)
 	rows,err := db.Query(query)
