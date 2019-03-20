@@ -8,7 +8,7 @@ import (
 	"github.com/email-server/Web_Server/errorHandler"
 )
 
-func SignUpHelper(dbPass string, username string, password string, otp string) int {
+func SignUpHelper(dbPass string, username string, password string) int {
 
 	// Match OTP with the USER
 

@@ -24,7 +24,11 @@ Has all the data a session of an User must have.
 type UserData struct {
 	LoggedIn string
 	UserName string
+	Password string
+	PhoneNo string
+	OTP string
 	ID string
+	Auth bool
 } 
 
 /*

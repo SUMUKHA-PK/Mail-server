@@ -12,40 +12,40 @@ import (
 	"github.com/email-server/Web_Server/util"
 )
 
+// This, though a global variable exists in its own thread when running, so is fine.
+var User util.UserData
+
 func signupHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET" {
 		util.RenderPage(w, "../webpages/authentication/signup.html")
 	} else if r.Method == "POST" {
+
 		r.ParseForm()
 
-		username := r.Form["username"]
-		password := r.Form["password"]
+		User.UserName = util.GetString(r.Form["username"])
+		User.Password = util.GetString(r.Form["password"])
+		User.PhoneNo = util.GetString(r.Form["phno"])
+		User.Auth = false
 
-		usernamestr := util.GetString(username)
-		passwordstr := util.GetString(password)
+		User.OTP = authentication.GenerateOTP()
+		util.RenderPage(w,"../webpages/authentication/otp.html")
+	}
+}
 
-		// We must get OTP from here
-		otp := "1234"
-
-		x := authentication.Authentication(usernamestr, passwordstr, 0, otp)
+func signupHelper(username string, password string, phno string,w http.ResponseWriter, r *http.Request){
+	if User.Auth {
+		x := authentication.Authentication(User.UserName,User.Password, 0)
 
 		if x == 1 {
 			util.RenderPage(w, "../webpages/static/signupLogin.html")
 		} else {
 			util.RenderPage(w, "../webpages/static/signupFail.html")
 		}
-		// Things to do:
-		// 1. Redirect to a page where then can enter their phonenumber
-		// 2. Verify that phone number via OTP
-		// 3. If OTP Matches, add a DB entry of username and password
-		// 4. Then redirect them to the login page!
+	}else{
 
 	}
 }
-
-// This, though a global variable exists in its own thread when running, so is fine.
-var User util.UserData
 
 // loginHandler handles authentication and session creation for every login
 func loginHandler(w http.ResponseWriter, r *http.Request) {
@@ -54,13 +54,11 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		util.RenderPage(w, "../webpages/authentication/login.html")
 	} else if r.Method == "POST" {
 		r.ParseForm()
-		username := r.Form["username"]
-		password := r.Form["password"]
+	
+		User.UserName = util.GetString(r.Form["username"])
+		User.Password = util.GetString(r.Form["password"])
 
-		User.UserName = util.GetString(username)
-		passwordstr := util.GetString(password)
-
-		x := authentication.Authentication(User.UserName, passwordstr, 1, "")
+		x := authentication.Authentication(User.UserName, User.Password, 1)
 		var sessionVar util.UserData
 		
 		if x == 2 {
@@ -70,6 +68,23 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 			sessionHandler.SessionHandlerNew(w, r, User.UserName, "1")
 		} else {
 			util.RenderPage(w, "../webpages/static/loginfail.html")
+		}
+	}
+}
+
+func verifyAndRoute(username string, password string, phno string,w http.ResponseWriter, r *http.Request){
+
+	if r.Method == "GET" {
+		util.RenderPage(w,"../webpages/authentication/otp.html")
+	}else if r.Method == "POST"{
+		r.ParseForm()
+		otpUser := util.GetString(r.Form["otp"])
+
+		if otpUser == User.OTP {
+			User.Auth = true
+			signupHelper(username,password,phno,w,r)			
+		}else{
+			util.RenderPage(w, "../webpages/static/otpFail.html")
 		}
 	}
 }
@@ -90,7 +105,6 @@ func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 		if sessionHandler.CheckActiveSession(r,User.UserName){
 			log.Println("Found an active session")
 			sessionVar := sessionHandler.GetActiveSession(User.UserName)
-			fmt.Println(sessionVar)
 			sessionHandler.SessionHandlerNew(w,r,sessionVar.UserName,"1")
 		}else{
 			util.RenderPage(w, "../webpages/static/index.html")
@@ -122,8 +136,14 @@ func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 	} else if r.URL.Path == "/logout" {
 		logoutHandler(w, r)
 		log.Print("Routed to Home page on logout\n")
-	} else {
+	} else if r.URL.Path == "/otpfail.html"{
+		log.Print("Routed to OTP Fail page\n")
+	} else if r.URL.Path == "/otp" || r.URL.Path == "/otp.html"{
+		log.Print("Routed to OTP verification page\n")
+		verifyAndRoute(User.UserName,User.Password,User.PhoneNo,w,r)
+	}else {
 		w.WriteHeader(http.StatusNotFound) // Status code 404
 		fmt.Fprint(w, "<h1>Error 404 : Page not found</h1>")
 	}
 }
+

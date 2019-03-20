@@ -5,12 +5,12 @@ import (
 	"github.com/email-server/Web_Server/authorisation"
 )
 
-func Authentication(username string, password string, decider int, otp string) int {
+func Authentication(username string, password string, decider int) int {
 
 	DBPass := authorisation.ObtainPass()
 	// Decider 0 for Signup, 1 for Login
 	if decider == 0 {
-		if SignUpHelper(DBPass, username, password, otp) == 1 {
+		if SignUpHelper(DBPass, username, password) == 1 {
 			return 1
 		} else {
 			return -1
