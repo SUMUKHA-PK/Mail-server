@@ -7,12 +7,10 @@ This currently can get the email data and render pages on a template
 package sessionHandler
 
 import (
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 
-	"github.com/gorilla/sessions"
 	"github.com/email-server/Web_Server/DB"
 	"github.com/email-server/Web_Server/errorHandler"
 )
@@ -25,15 +23,15 @@ type Email struct {
 	Sent      int
 }
 
-func SessionManager(session *sessions.Session, w http.ResponseWriter, r *http.Request) {
+// func SessionManager(session *sessions.Session, w http.ResponseWriter, r *http.Request) {
 
-	sess_name := session.Values["ID"]
+// 	sess_name := session.Values["ID"]
 
-	var ID = string(sess_name.(string))
+// 	var ID = string(sess_name.(string))
 
-	fmt.Print(ID)
+// 	fmt.Print(ID)
 
-}
+// }
 
 /*
 SessionHandlerNew is currently a botched job.
