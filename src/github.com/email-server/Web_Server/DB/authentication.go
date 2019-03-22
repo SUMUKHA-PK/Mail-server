@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"errors"
 	"github.com/email-server/Web_Server/authorisation"
 	"github.com/email-server/Web_Server/errorHandler"
 	"github.com/email-server/Web_Server/util"
@@ -71,14 +72,14 @@ func AuthenticateLogin(db *sql.DB, username string, password string) int {
 // Checks the existance of a session entry in the DB for the active sessions
 // Returns empty array and / or error on invalid queries
 
-func CheckActiveSession() ([]util.UserData, error) {
+func CheckActiveSession(ID string) ([]util.UserData, error) {
 
 	dbPass := authorisation.ObtainPass()
 	pass := "root:" + dbPass + "@/MailDB"
 	db, err := sql.Open("mysql", pass)
 	errorHandler.ErrorHandler(err)
 
-	query := "SELECT * FROM sessions WHERE loggedIn = \"true\""
+	query := "SELECT * FROM sessions WHERE userID = \""+ID+"\""
 	
 	fmt.Println(query)
 	rows,err := db.Query(query)
@@ -94,12 +95,17 @@ func CheckActiveSession() ([]util.UserData, error) {
 	for rows.Next() {
 		if err := rows.Scan(&userID, &loggedIn, &Username); err != nil {
 			log.Fatal(err)
+			return []util.UserData{},err
 		}
 		user = append(user, util.UserData{ID: userID, LoggedIn: loggedIn, UserName: Username})
 	}
 
 	err = rows.Err()
-	
+	if err == nil{
+		if len(user)==0{
+			err = errors.New("No user found")
+		}
+	}
 	return user,err
 	
 }

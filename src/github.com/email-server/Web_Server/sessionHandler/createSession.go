@@ -8,7 +8,7 @@ import (
 	"log"
 	"net/http"
 	"time"
-	// "fmt"
+	"fmt"
 
 	"github.com/email-server/Web_Server/util"
 	"github.com/email-server/Web_Server/DB"
@@ -27,7 +27,7 @@ func CreateSession(w http.ResponseWriter, username string) util.UserData {
 	user.UserName = username
 	user.LoggedIn = "true"
 	expiration := time.Now().Add(time.Hour)
-	cookie := http.Cookie{Name: user.ID ,Value: user.UserName ,Expires:expiration}
+	cookie := http.Cookie{Name: "session-id" ,Value: user.ID ,Expires:expiration}
 	http.SetCookie(w, &cookie)
 
 	DB.AddUserData(user.ID,user.LoggedIn,user.UserName)
@@ -41,20 +41,31 @@ CheckActiveSession queries the DB for the current users data, checks the cookie
 for corresponding data and returns true if the data is as expected, else 
 returns false. 
 */
-func CheckActiveSession(r *http.Request, username string) bool {
+func CheckActiveSession(r *http.Request) ([]util.UserData,bool) {
 
-	userData,err:= DB.CheckActiveSession()
-	if err==nil && userData!=nil{
-		cookie, err :=r.Cookie(userData[0].ID)
+	// userData,err:= DB.CheckActiveSession()
+	// if err==nil && userData!=nil{
+	// 	cookie, err :=r.Cookie("session-id")
+	// 	if err!=nil {
+	// 		return false
+	// 	}
+	// 	if cookie.Value == userData[0].ID {
+	// 		return true
+	// 	}
+	// 	return false
+	// }
+	// return false	
+	cookie,err := r.Cookie("session-id")
+	if err!=nil{
+		return []util.UserData{}, false
+	}else{
+		user,err := DB.CheckActiveSession(cookie.Value)
 		if err!=nil {
-			return false
+			return []util.UserData{}, false
 		}
-		if cookie.Value == userData[0].UserName {
-			return true
-		}
-		return false
+		fmt.Println("WTF")
+		return user,true
 	}
-	return false	
 }	
 
 /*

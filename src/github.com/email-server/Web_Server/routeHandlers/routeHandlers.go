@@ -108,8 +108,8 @@ func roomCreationHandler(w http.ResponseWriter, r *http.Request){
 
 // logoutHandler renders the logout page (home page) on button click
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
-	user,err := DB.CheckActiveSession()
-	if user!=nil && err==nil {
+	user,val := sessionHandler.CheckActiveSession(r)
+	if user!=nil && val {
 		sessionHandler.DestroySession(w,user)
 	}
 	util.RenderPage(w, "../webpages/static/index.html")
@@ -119,9 +119,10 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 	// Home page of server
 	if r.URL.Path == "/" {
-		if sessionHandler.CheckActiveSession(r,User.UserName){
+		user,val := sessionHandler.CheckActiveSession(r)
+		if val {
 			log.Println("Found an active session")
-			sessionVar := sessionHandler.GetActiveSession(User.UserName)
+			sessionVar := sessionHandler.GetActiveSession(user[0].UserName)
 			sessionHandler.SessionHandlerNew(w,r,sessionVar.UserName,"1")
 		}else{
 			util.RenderPage(w, "../webpages/static/index.html")
