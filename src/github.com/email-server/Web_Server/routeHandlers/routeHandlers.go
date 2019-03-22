@@ -43,7 +43,7 @@ func signupHelper(username string, password string, phno string,w http.ResponseW
 			util.RenderPage(w, "../webpages/static/signupFail.html")
 		}
 	}else{
-
+		//Not sure
 	}
 }
 
@@ -89,6 +89,23 @@ func verifyAndRoute(username string, password string, phno string,w http.Respons
 	}
 }
 
+func roomCreationHandler(w http.ResponseWriter, r *http.Request){
+	if r.Method == "GET" {
+		util.RenderPage(w,"../webpages/static/createRoom.html")
+	}else if r.Method == "POST" {
+		r.ParseForm()
+
+		var roomData util.RoomData 
+
+		roomData.RoomName = util.GetString(r.Form["roomName"])
+		roomData.Admins = util.GetStringAndAppend(roomData.Admins,r.Form["admins"])
+		roomData.Members = util.GetStringAndAppend(roomData.Members,r.Form["users"])
+
+		fmt.Println(roomData)
+	}
+	
+}
+
 // logoutHandler renders the logout page (home page) on button click
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	user,err := DB.CheckActiveSession()
@@ -110,7 +127,6 @@ func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 			util.RenderPage(w, "../webpages/static/index.html")
 			log.Print("Routed to Home page\n")
 		}
-		// 2 paths :one handles the POST other handles the GET
 	} else if r.URL.Path == "/login.html" || r.URL.Path == "/login" {
 		loginHandler(w, r)
 		log.Print("Routed to Login page\n")
@@ -141,7 +157,10 @@ func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 	} else if r.URL.Path == "/otp" || r.URL.Path == "/otp.html"{
 		log.Print("Routed to OTP verification page\n")
 		verifyAndRoute(User.UserName,User.Password,User.PhoneNo,w,r)
-	}else {
+	} else if r.URL.Path == "/createRoom" || r.URL.Path == "/createRoom.html" {
+		log.Print("Routed to room creation page\n")
+		roomCreationHandler(w,r)
+	} else {
 		w.WriteHeader(http.StatusNotFound) // Status code 404
 		fmt.Fprint(w, "<h1>Error 404 : Page not found</h1>")
 	}

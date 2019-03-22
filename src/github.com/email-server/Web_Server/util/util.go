@@ -31,6 +31,13 @@ type UserData struct {
 	Auth bool
 } 
 
+type RoomData struct {
+	RoomName string
+	Members []string
+	RoomID string
+	Admins []string
+}
+
 /*
 RenderPage is used to Render any webpage when called
 */
@@ -138,4 +145,13 @@ func GenerateRandomString(len int) string {
 		bytes[i] = byte(RandomInt(65, 90))
 	}
 	return string(bytes)
+}
+
+func GetStringAndAppend(arr []string , data []string) []string {
+	var addr []string
+	newData := GetStringArr(data,1)
+	for i := 0; i < len(newData); i++ {
+		addr = append(addr,newData[i])
+	}
+	return addr
 }

@@ -26,8 +26,8 @@ func CreateSession(w http.ResponseWriter, username string) util.UserData {
 	user.ID = util.GenerateRandomString(32)
 	user.UserName = username
 	user.LoggedIn = "true"
-	expiration := time.Now().Add(365 * 24 * time.Hour)
-	cookie    :=    http.Cookie{Name: user.ID ,Value: user.UserName ,Expires:expiration}
+	expiration := time.Now().Add(time.Hour)
+	cookie := http.Cookie{Name: user.ID ,Value: user.UserName ,Expires:expiration}
 	http.SetCookie(w, &cookie)
 
 	DB.AddUserData(user.ID,user.LoggedIn,user.UserName)
@@ -45,7 +45,10 @@ func CheckActiveSession(r *http.Request, username string) bool {
 
 	userData,err:= DB.CheckActiveSession()
 	if err==nil && userData!=nil{
-		cookie, _ :=r.Cookie(userData[0].ID)
+		cookie, err :=r.Cookie(userData[0].ID)
+		if err!=nil {
+			return false
+		}
 		if cookie.Value == userData[0].UserName {
 			return true
 		}
