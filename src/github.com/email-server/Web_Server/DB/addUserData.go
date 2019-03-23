@@ -9,7 +9,7 @@ import (
 )
 
 /*
-*    AddUserData adds the data for every session to the DB
+*    AddUserData adds the data for every session to the DB after clearing any past sessions in the DB
 */
 
 func AddUserData(userID string, loggedIn string, username string){
@@ -19,6 +19,7 @@ func AddUserData(userID string, loggedIn string, username string){
 	db, err := sql.Open("mysql", pass)
 	errorHandler.ErrorHandler(err)
 
+	// Remove only if the time is expired
 	session := "delete from sessions where username = \"" + username + "\"" ;
 
 	_, err = db.Exec(session)
