@@ -13,7 +13,6 @@ func ComposeHandler(w http.ResponseWriter, r *http.Request) [][]string {
 	// Parse the form
 	r.ParseForm()
 
-	from_mail := r.Form["from"]
 	to_email := r.Form["to"]
 	email_body := r.Form["body"]
 
@@ -30,7 +29,6 @@ func ComposeHandler(w http.ResponseWriter, r *http.Request) [][]string {
 
 	var d [][]string
 
-	d = append(d, util.GetStringArr(from_mail, 0))
 	d = append(d, util.GetStringArr(to_email, 1))
 	d = append(d, util.GetStringArr(email_body, 0))
 

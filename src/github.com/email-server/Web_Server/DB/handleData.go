@@ -7,6 +7,7 @@ import (
 
 	"github.com/email-server/Web_Server/authorisation"
 	"github.com/email-server/Web_Server/errorHandler"
+	// "github.com/email-server/Web_Server/util"
 )
 
 // GetEmails gets all the emails related to the username. 
@@ -29,11 +30,15 @@ func GetEmails(username string, inbox string) *sql.Rows {
 
 // UpdateDB is used to handle sent and received emails from and to the users
 
-func UpdateDB(data [][]string) {
+func UpdateDB(data [][]string, username string) {
 	dbPass := authorisation.ObtainPass()
 	pass := "root:" + dbPass + "@/MailDB"
 	db, err := sql.Open("mysql", pass)
 	errorHandler.ErrorHandler(err)
+
+	var user []string
+	user = append(user,username)
+	data = append([][]string{user},data...)
 
 	for i := 0; i < len(data[1]); i++ {
 		email := "INSERT INTO " + data[1][i] + " VALUES(\"" + data[2][0] + "\",\"" + data[0][0] + "\",\"" + data[1][i] + "\",1,0)"
