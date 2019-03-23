@@ -1,5 +1,7 @@
 # Mail-server
 
+[![HitCount](http://hits.dwyl.io/SUMUKHA-PK/Mail-Server.svg)](http://hits.dwyl.io/SUMUKHA-PK/Mail-Server)
+
 Here is an implementation of an Email Service in Golang
 
 ## Pre-requisites :
