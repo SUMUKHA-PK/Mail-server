@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"time"
-	"fmt"
 
 	"github.com/email-server/Web_Server/util"
 	"github.com/email-server/Web_Server/DB"
@@ -43,18 +42,6 @@ returns false.
 */
 func CheckActiveSession(r *http.Request) ([]util.UserData,bool) {
 
-	// userData,err:= DB.CheckActiveSession()
-	// if err==nil && userData!=nil{
-	// 	cookie, err :=r.Cookie("session-id")
-	// 	if err!=nil {
-	// 		return false
-	// 	}
-	// 	if cookie.Value == userData[0].ID {
-	// 		return true
-	// 	}
-	// 	return false
-	// }
-	// return false	
 	cookie,err := r.Cookie("session-id")
 	if err!=nil{
 		return []util.UserData{}, false
@@ -63,7 +50,6 @@ func CheckActiveSession(r *http.Request) ([]util.UserData,bool) {
 		if err!=nil {
 			return []util.UserData{}, false
 		}
-		fmt.Println("WTF")
 		return user,true
 	}
 }	

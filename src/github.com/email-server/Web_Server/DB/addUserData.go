@@ -19,6 +19,11 @@ func AddUserData(userID string, loggedIn string, username string){
 	db, err := sql.Open("mysql", pass)
 	errorHandler.ErrorHandler(err)
 
+	session := "delete from sessions where username = \"" + username + "\"" ;
+
+	_, err = db.Exec(session)
+	errorHandler.ErrorHandler(err)
+
 	sessionData := "INSERT INTO sessions values(\"" + userID + "\",\"" + loggedIn + "\",\"" + username + "\")"
 
 	fmt.Println(sessionData)
