@@ -2,6 +2,8 @@
 
 [![HitCount](http://hits.dwyl.io/SUMUKHA-PK/Mail-Server.svg)](http://hits.dwyl.io/SUMUKHA-PK/Mail-Server)
 
+[![Build Status](https://travis-ci.com/SUMUKHA-PK/Mail-server.svg?branch=master)](https://travis-ci.com/SUMUKHA-PK/Mail-server)
+
 Here is an implementation of an Email Service in Golang
 
 ## Pre-requisites :
