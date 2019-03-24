@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Logged in</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+ROOM!
+<main class="flex flex-column min-vh-100"><!-- use flex to separate the layouts into diff sections. -->
+    <header class="w-100">
+        <div class="w-30 dib bg-washed-blue">
+        </div><div class="w-70 dib">
+    </div>
+        </div>
+    </header>
+    <section class="flex-auto flex flex-column flex-row-ns">
+        <div class="pv4 pv2-ns ph2 bg-light-gray tc w-30-ns">
+            <div class="dib">
+                <a href="/loggedin.html" class="pv2 ph4 f6 fw3 fw6-ns hover-blue link pointer black-80 db">Inbox</a>
+                <a href="/logout" class="pv2 ph4 f6 fw3 fw6-ns hover-blue link pointer black-80 db">Logout</a>
+            </div>
+        </div>
+        <div class="pv4 pv2-ns ph2 bg-light-gray overflow-y-scroll w-70-ns"  style="background-image: linear-gradient(to right, rgb(225, 28, 117), rgb(226, 236, 24)">
+            <blockquote class="lh-copy">
+                <table >
+                    <thead>
+                    <tr>
+                        <th scope="col">From</th>
+                        <th scope="col">Body</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {{ range . }}
+                    <tr>
+                        <td>{{ .From_addr }}</td>
+                        <td>{{ .Body }}</td>
+                    </tr>
+                    {{ end }}
+                    </tbody>
+                </table>
+            </blockquote>
+
+        </div>
+    </section>
+</main>
+<form action="/room" method="post" id="message">
+    <p>Compose:</p> 
+        <textarea rows="1" cols="50" name="body" form="message"></textarea>
+        <input type="submit" name="Send" value="Send"/>
+    </p>
+    
+</form>
+</body>
+</html>

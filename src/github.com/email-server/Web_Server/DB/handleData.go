@@ -7,10 +7,9 @@ import (
 
 	"github.com/email-server/Web_Server/authorisation"
 	"github.com/email-server/Web_Server/errorHandler"
-	// "github.com/email-server/Web_Server/util"
 )
 
-// GetEmails gets all the emails related to the username. 
+// GetEmails gets all the emails related to the username.
 // inbox arg : 0 -> SentBox, 1-> Inbox
 
 func GetEmails(username string, inbox string) *sql.Rows {
@@ -37,8 +36,8 @@ func UpdateDB(data [][]string, username string) {
 	errorHandler.ErrorHandler(err)
 
 	var user []string
-	user = append(user,username)
-	data = append([][]string{user},data...)
+	user = append(user, username)
+	data = append([][]string{user}, data...)
 
 	for i := 0; i < len(data[1]); i++ {
 		email := "INSERT INTO " + data[1][i] + " VALUES(\"" + data[2][0] + "\",\"" + data[0][0] + "\",\"" + data[1][i] + "\",1,0)"
@@ -60,8 +59,36 @@ func GetUserData(username string) *sql.Rows {
 	errorHandler.ErrorHandler(err)
 
 	data := "SELECT * FROM sessions WHERE username = \"" + username + "\""
-	
-	rows,err:= db.Query(data)
+
+	rows, err := db.Query(data)
+	errorHandler.ErrorHandler(err)
+
+	return rows
+}
+
+func GetRoomData(roomName string) *sql.Rows {
+	dbPass := authorisation.ObtainPass()
+	pass := "root:" + dbPass + "@/credentials"
+	db, err := sql.Open("mysql", pass)
+	errorHandler.ErrorHandler(err)
+
+	data := "SELECT * FROM " + roomName
+
+	rows, err := db.Query(data)
+	errorHandler.ErrorHandler(err)
+
+	return rows
+}
+
+func GetRoomsUser(username string) *sql.Rows {
+	dbPass := authorisation.ObtainPass()
+	pass := "root:" + dbPass + "@/roomDB"
+	db, err := sql.Open("mysql", pass)
+	errorHandler.ErrorHandler(err)
+
+	data := "SELECT * FROM rooms WHERE userName = \"" + username + "\""
+
+	rows, err := db.Query(data)
 	errorHandler.ErrorHandler(err)
 
 	return rows

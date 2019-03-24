@@ -2,9 +2,10 @@ package DB
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
-	"errors"
+
 	"github.com/email-server/Web_Server/authorisation"
 	"github.com/email-server/Web_Server/errorHandler"
 	"github.com/email-server/Web_Server/util"
@@ -79,10 +80,10 @@ func CheckActiveSession(ID string) ([]util.UserData, error) {
 	db, err := sql.Open("mysql", pass)
 	errorHandler.ErrorHandler(err)
 
-	query := "SELECT * FROM sessions WHERE userID = \""+ID+"\""
-	
+	query := "SELECT * FROM sessions WHERE userID = \"" + ID + "\""
+
 	fmt.Println(query)
-	rows,err := db.Query(query)
+	rows, err := db.Query(query)
 
 	defer rows.Close()
 
@@ -95,17 +96,56 @@ func CheckActiveSession(ID string) ([]util.UserData, error) {
 	for rows.Next() {
 		if err := rows.Scan(&userID, &loggedIn, &Username); err != nil {
 			log.Fatal(err)
-			return []util.UserData{},err
+			return []util.UserData{}, err
 		}
 		user = append(user, util.UserData{ID: userID, LoggedIn: loggedIn, UserName: Username})
 	}
 
 	err = rows.Err()
-	if err == nil{
-		if len(user)==0{
+	if err == nil {
+		if len(user) == 0 {
 			err = errors.New("No user found")
 		}
 	}
-	return user,err
-	
+	return user, err
+}
+
+func CreateRoom(room util.RoomData) error {
+	dbPass := authorisation.ObtainPass()
+	pass := "root:" + dbPass + "@/credentials"
+	db, err := sql.Open("mysql", pass)
+	errorHandler.ErrorHandler(err)
+
+	query := "CREATE TABLE " + room.RoomName + " (body LONGTEXT ,from_addr  VARCHAR(256) )"
+	fmt.Println(query)
+	_, err = db.Exec(query)
+
+	if err == nil {
+		// After creating a table for the room, we enter the record of the users existing
+		// in the room in another DB
+
+		pass = "root:" + dbPass + "@/roomDB"
+		db, err = sql.Open("mysql", pass)
+		errorHandler.ErrorHandler(err)
+		fmt.Println(room)
+		for i := 0; i < len(room.Members); i++ {
+			query = "INSERT INTO rooms VALUES( \"" + room.RoomName + "\",\"" + room.Members[i] + "\",0)"
+			_, err = db.Exec(query)
+			if err != nil {
+				log.Println(err)
+			}
+		}
+
+		for i := 0; i < len(room.Admins); i++ {
+			query = "INSERT INTO rooms VALUES( \"" + room.RoomName + "\",\"" + room.Admins[i] + "\",1)"
+			_, err = db.Exec(query)
+			if err != nil {
+				log.Println(err)
+			}
+		}
+	} else {
+		log.Println(err)
+		return err
+	}
+	return nil
 }

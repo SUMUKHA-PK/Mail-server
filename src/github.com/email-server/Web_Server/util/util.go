@@ -25,17 +25,18 @@ type UserData struct {
 	LoggedIn string
 	UserName string
 	Password string
-	PhoneNo string
-	OTP string
-	ID string
-	Auth bool
-} 
+	PhoneNo  string
+	OTP      string
+	ID       string
+	Auth     bool
+	Rooms    []RoomData
+}
 
 type RoomData struct {
 	RoomName string
-	Members []string
-	RoomID string
-	Admins []string
+	Members  []string
+	RoomID   string
+	Admins   []string
 }
 
 /*
@@ -147,11 +148,11 @@ func GenerateRandomString(len int) string {
 	return string(bytes)
 }
 
-func GetStringAndAppend(arr []string , data []string) []string {
+func GetStringAndAppend(arr []string, data []string) []string {
 	var addr []string
-	newData := GetStringArr(data,1)
+	newData := GetStringArr(data, 1)
 	for i := 0; i < len(newData); i++ {
-		addr = append(addr,newData[i])
+		addr = append(addr, newData[i])
 	}
 	return addr
 }

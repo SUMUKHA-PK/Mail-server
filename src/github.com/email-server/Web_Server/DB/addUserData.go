@@ -4,15 +4,16 @@ import (
 	"fmt"
 
 	"database/sql"
+
 	"github.com/email-server/Web_Server/authorisation"
 	"github.com/email-server/Web_Server/errorHandler"
 )
 
 /*
 *    AddUserData adds the data for every session to the DB after clearing any past sessions in the DB
-*/
+ */
 
-func AddUserData(userID string, loggedIn string, username string){
+func AddUserData(userID string, loggedIn string, username string) {
 
 	dbPass := authorisation.ObtainPass()
 	pass := "root:" + dbPass + "@/MailDB"
@@ -20,7 +21,7 @@ func AddUserData(userID string, loggedIn string, username string){
 	errorHandler.ErrorHandler(err)
 
 	// Remove only if the time is expired
-	session := "delete from sessions where username = \"" + username + "\"" ;
+	session := "delete from sessions where username = \"" + username + "\""
 
 	_, err = db.Exec(session)
 	errorHandler.ErrorHandler(err)
@@ -31,7 +32,6 @@ func AddUserData(userID string, loggedIn string, username string){
 	_, err = db.Exec(sessionData)
 	errorHandler.ErrorHandler(err)
 }
-
 
 func RemoveUserData(userID string, loggedIn string, username string) {
 
@@ -44,5 +44,18 @@ func RemoveUserData(userID string, loggedIn string, username string) {
 
 	fmt.Println(sessionData)
 	_, err = db.Exec(sessionData)
-	errorHandler.ErrorHandler(err)	
+	errorHandler.ErrorHandler(err)
+}
+
+func AddDataToDB(roomName string, username string, data string) {
+	dbPass := authorisation.ObtainPass()
+	pass := "root:" + dbPass + "@/credentials"
+	db, err := sql.Open("mysql", pass)
+	errorHandler.ErrorHandler(err)
+
+	sessionData := "INSERT INTO " + roomName + " values(\"" + data + "\",\"" + username + "\")"
+
+	fmt.Println(sessionData)
+	_, err = db.Exec(sessionData)
+	errorHandler.ErrorHandler(err)
 }
