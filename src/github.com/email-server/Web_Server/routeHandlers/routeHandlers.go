@@ -1,11 +1,9 @@
 package routeHandlers
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/email-server/Web_Server/DB"
 	"github.com/email-server/Web_Server/mailHandler"
@@ -21,8 +19,6 @@ var Room util.RoomData
 func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 	// Home page of server
 	if r.URL.Path == "/" {
-		ctx, cancel := context.WithTimeout(context.Background(), 3600*time.Second)
-		defer cancel()
 		user, val := sessionHandler.CheckActiveSession(r)
 		if val {
 			log.Println("Found an active session")
@@ -42,35 +38,70 @@ func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 		util.RenderPage(w, "../webpages/static/compose.html")
 		log.Print("Routed to Compose page\n")
 	} else if r.URL.Path == "/compose" {
-		var data [][]string = mailHandler.ComposeHandler(w, r)
-		DB.UpdateDB(data, User.UserName)
-		username := User.UserName
-		sessionHandler.SessionHandlerNew(w, r, username, "1")
+		user, val := sessionHandler.CheckActiveSession(r)
+		if val {
+			var data [][]string = mailHandler.ComposeHandler(w, r)
+			DB.UpdateDB(data, User.UserName)
+			username := user[0].UserName
+			sessionHandler.SessionHandlerNew(w, r, username, "1")
+		} else {
+
+		}
 	} else if r.URL.Path == "/sentmail.html" {
-		username := User.UserName
-		sessionHandler.SessionHandlerNew(w, r, username, "0")
-		log.Print("Routed to Sentmail page\n")
+		user, val := sessionHandler.CheckActiveSession(r)
+		if val {
+			username := user[0].UserName
+			sessionHandler.SessionHandlerNew(w, r, username, "0")
+			log.Print("Routed to Sentmail page\n")
+		} else {
+
+		}
+
 	} else if r.URL.Path == "/loggedin.html" {
-		username := User.UserName
-		sessionHandler.SessionHandlerNew(w, r, username, "1")
-		log.Print("Routed to loggedin page\n")
+		user, val := sessionHandler.CheckActiveSession(r)
+		if val {
+			username := user[0].UserName
+			sessionHandler.SessionHandlerNew(w, r, username, "1")
+			log.Print("Routed to loggedin page\n")
+		} else {
+
+		}
+
 	} else if r.URL.Path == "/logout" {
 		LogoutHandler(w, r)
 		log.Print("Routed to Home page on logout\n")
 	} else if r.URL.Path == "/otpfail.html" {
 		log.Print("Routed to OTP Fail page\n")
 	} else if r.URL.Path == "/otp" || r.URL.Path == "/otp.html" {
-		log.Print("Routed to OTP verification page\n")
-		VerifyAndRoute(User.UserName, User.Password, User.PhoneNo, w, r)
+		user, val := sessionHandler.CheckActiveSession(r)
+		if val {
+			log.Print("Routed to OTP verification page\n")
+			VerifyAndRoute(user[0].UserName, user[0].Password, user[0].PhoneNo, w, r)
+		} else {
+
+		}
+
 	} else if r.URL.Path == "/createRoom" || r.URL.Path == "/createRoom.html" {
 		log.Print("Routed to room creation page\n")
 		RoomCreationHandler(w, r)
 	} else if r.URL.Path == "/room" || r.URL.Path == "/room.html" {
-		log.Print("Routed to room page\n")
-		RoomHandler(w, r)
+		user, val := sessionHandler.CheckActiveSession(r)
+		if val {
+			log.Print("Routed to room page\n")
+			RoomHandler(w, r, user)
+		} else {
+
+		}
+
 	} else if r.URL.Path == "/rooms" || r.URL.Path == "/rooms.html" {
-		log.Print("Routed to room page\n")
-		RenderRoomChoicePage(w, r)
+		user, val := sessionHandler.CheckActiveSession(r)
+		if val {
+			log.Print("Routed to room page\n")
+			RenderRoomChoicePage(w, r, user)
+		} else {
+
+		}
+
 	} else if r.URL.Path == "/userRoom.html" {
 		log.Print("Routed to user room page\n")
 		RenderUserRoom(w, r)

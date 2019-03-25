@@ -31,12 +31,12 @@ func RoomCreationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func RoomHandler(w http.ResponseWriter, r *http.Request) {
+func RoomHandler(w http.ResponseWriter, r *http.Request, user []util.UserData) {
 	r.ParseForm()
 
 	email_body := util.GetString(r.Form["body"])
 
-	DB.AddDataToDB(Room.RoomName, User.UserName, email_body)
+	DB.AddDataToDB(Room.RoomName, user[0].UserName, email_body)
 
 	renderRoomData(w, r, Room.RoomName)
 }
@@ -82,7 +82,7 @@ func renderRoomData(w http.ResponseWriter, r *http.Request, roomName string) {
 	template.ExecuteTemplate(w, "room.html", emails)
 }
 
-func RenderRoomChoicePage(w http.ResponseWriter, r *http.Request) {
+func RenderRoomChoicePage(w http.ResponseWriter, r *http.Request, user []util.UserData) {
 	var template *template.Template
 	template, err := template.ParseGlob("../webpages/static/*.html")
 
@@ -94,7 +94,7 @@ func RenderRoomChoicePage(w http.ResponseWriter, r *http.Request) {
 	var uName string
 	var admin string
 
-	rows := DB.GetRoomsUser(User.UserName)
+	rows := DB.GetRoomsUser(user[0].UserName)
 
 	for rows.Next() {
 		err = rows.Scan(&rName, &uName, &admin)
