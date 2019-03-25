@@ -1,9 +1,11 @@
 package routeHandlers
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/email-server/Web_Server/DB"
 	"github.com/email-server/Web_Server/mailHandler"
@@ -19,6 +21,8 @@ var Room util.RoomData
 func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 	// Home page of server
 	if r.URL.Path == "/" {
+		ctx, cancel := context.WithTimeout(context.Background(), 3600*time.Second)
+		defer cancel()
 		user, val := sessionHandler.CheckActiveSession(r)
 		if val {
 			log.Println("Found an active session")
@@ -67,6 +71,9 @@ func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 	} else if r.URL.Path == "/rooms" || r.URL.Path == "/rooms.html" {
 		log.Print("Routed to room page\n")
 		RenderRoomChoicePage(w, r)
+	} else if r.URL.Path == "/userRoom.html" {
+		log.Print("Routed to user room page\n")
+		RenderUserRoom(w, r)
 	} else {
 		w.WriteHeader(http.StatusNotFound) // Status code 404
 		fmt.Fprint(w, "<h1>Error 404 : Page not found</h1>")

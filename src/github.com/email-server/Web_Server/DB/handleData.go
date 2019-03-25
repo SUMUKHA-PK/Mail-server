@@ -11,7 +11,6 @@ import (
 
 // GetEmails gets all the emails related to the username.
 // inbox arg : 0 -> SentBox, 1-> Inbox
-
 func GetEmails(username string, inbox string) *sql.Rows {
 
 	dbPass := authorisation.ObtainPass()
@@ -28,7 +27,6 @@ func GetEmails(username string, inbox string) *sql.Rows {
 }
 
 // UpdateDB is used to handle sent and received emails from and to the users
-
 func UpdateDB(data [][]string, username string) {
 	dbPass := authorisation.ObtainPass()
 	pass := "root:" + dbPass + "@/MailDB"
@@ -66,6 +64,7 @@ func GetUserData(username string) *sql.Rows {
 	return rows
 }
 
+// GetRoomData gives all the emails in the room for the given roomName
 func GetRoomData(roomName string) *sql.Rows {
 	dbPass := authorisation.ObtainPass()
 	pass := "root:" + dbPass + "@/credentials"
@@ -80,6 +79,7 @@ func GetRoomData(roomName string) *sql.Rows {
 	return rows
 }
 
+// GetRoomsUser gives the rooms associated with the user
 func GetRoomsUser(username string) *sql.Rows {
 	dbPass := authorisation.ObtainPass()
 	pass := "root:" + dbPass + "@/roomDB"
@@ -92,4 +92,21 @@ func GetRoomsUser(username string) *sql.Rows {
 	errorHandler.ErrorHandler(err)
 
 	return rows
+}
+
+// GetUserRoomData gives the roomData associated with the roomName
+func GetUserRoomData(roomName string) (*sql.Rows, error) {
+	dbPass := authorisation.ObtainPass()
+	pass := "root:" + dbPass + "@/roomDB"
+	db, err := sql.Open("mysql", pass)
+	errorHandler.ErrorHandler(err)
+
+	data := "SELECT * FROM rooms WHERE roomName = \"" + roomName + "\""
+
+	rows, err := db.Query(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return rows, nil
 }

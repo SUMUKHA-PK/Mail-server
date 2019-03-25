@@ -50,6 +50,12 @@ type RoomsUser struct {
 	Rooms string
 }
 
+type Rooms struct {
+	RoomName string
+	Members  string
+	Admins   string
+}
+
 func renderRoomData(w http.ResponseWriter, r *http.Request, roomName string) {
 	var template *template.Template
 	template, err := template.ParseGlob("../webpages/static/*.html")
@@ -101,4 +107,36 @@ func RenderRoomChoicePage(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println(rooms)
 	template.ExecuteTemplate(w, "rooms.html", rooms)
+}
+
+func RenderUserRoom(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+
+	roomName := util.GetString(r.Form["roomName"])
+
+	var members string
+	var room string
+	var admins string
+	var rooms []Rooms
+
+	rows, err := DB.GetUserRoomData(roomName)
+
+	if err != nil {
+		// Unauthorised room access/something
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&room, &members, &admins)
+		if err != nil {
+			log.Println(err)
+			http.Error(w, "there was an error", http.StatusInternalServerError)
+			return
+		}
+
+		rooms = append(rooms, Rooms{RoomName: room, Members: members, Admins: admins})
+	}
+	fmt.Println(rooms)
+
+	Room.RoomName = roomName
+	renderRoomData(w, r, roomName)
 }
