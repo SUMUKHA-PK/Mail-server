@@ -30,6 +30,7 @@ type UserData struct {
 	ID       string
 	Auth     bool
 	Rooms    []RoomData
+	Admin    bool
 }
 
 type RoomData struct {

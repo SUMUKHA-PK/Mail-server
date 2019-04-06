@@ -38,7 +38,7 @@ func RoomHandler(w http.ResponseWriter, r *http.Request, user []util.UserData) {
 
 	DB.AddDataToDB(Room.RoomName, user[0].UserName, email_body)
 
-	renderRoomData(w, r, Room.RoomName)
+	renderRoomData(w, r, Room.RoomName, user)
 }
 
 type Emails struct {
@@ -56,7 +56,7 @@ type Rooms struct {
 	Admins   string
 }
 
-func renderRoomData(w http.ResponseWriter, r *http.Request, roomName string) {
+func renderRoomData(w http.ResponseWriter, r *http.Request, roomName string, user []util.UserData) {
 	var template *template.Template
 	template, err := template.ParseGlob("../webpages/static/*.html")
 
@@ -79,7 +79,12 @@ func renderRoomData(w http.ResponseWriter, r *http.Request, roomName string) {
 		emails = append(emails, Emails{Body: body, From_addr: from_addr})
 	}
 	fmt.Println(emails)
-	template.ExecuteTemplate(w, "room.html", emails)
+	if DB.CheckAdmin(user, roomName) {
+		template.ExecuteTemplate(w, "room.html", emails)
+	} else {
+		template.ExecuteTemplate(w, "room_na.html", emails)
+	}
+
 }
 
 func RenderRoomChoicePage(w http.ResponseWriter, r *http.Request, user []util.UserData) {
@@ -109,7 +114,7 @@ func RenderRoomChoicePage(w http.ResponseWriter, r *http.Request, user []util.Us
 	template.ExecuteTemplate(w, "rooms.html", rooms)
 }
 
-func RenderUserRoom(w http.ResponseWriter, r *http.Request) {
+func RenderUserRoom(w http.ResponseWriter, r *http.Request, user []util.UserData) {
 	r.ParseForm()
 
 	roomName := util.GetString(r.Form["roomName"])
@@ -138,5 +143,5 @@ func RenderUserRoom(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(rooms)
 
 	Room.RoomName = roomName
-	renderRoomData(w, r, roomName)
+	renderRoomData(w, r, roomName, user)
 }

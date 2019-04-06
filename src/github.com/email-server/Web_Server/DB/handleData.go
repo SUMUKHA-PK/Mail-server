@@ -3,10 +3,12 @@ package DB
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/email-server/Web_Server/authorisation"
 	"github.com/email-server/Web_Server/errorHandler"
+	"github.com/email-server/Web_Server/util"
 )
 
 // GetEmails gets all the emails related to the username.
@@ -109,4 +111,44 @@ func GetUserRoomData(roomName string) (*sql.Rows, error) {
 	}
 
 	return rows, nil
+}
+
+func CheckAdmin(user []util.UserData, roomName string) bool {
+	dbPass := authorisation.ObtainPass()
+	pass := "root:" + dbPass + "@/roomDB"
+	db, err := sql.Open("mysql", pass)
+	errorHandler.ErrorHandler(err)
+
+	data := "SELECT * FROM rooms WHERE roomName=\"" + roomName + "\" AND userName = \"" + user[0].UserName + "\""
+
+	fmt.Println(data)
+	rows, err := db.Query(data)
+
+	defer rows.Close()
+
+	var (
+		username string
+		roomname string
+		adminYN  string
+	)
+
+	type adminUser struct {
+		userN string
+		roomN string
+		admin string
+	}
+	var userd []adminUser
+	for rows.Next() {
+		if err := rows.Scan(&username, &roomname, &adminYN); err != nil {
+			log.Fatal(err)
+			return false
+		}
+		userd = append(userd, adminUser{userN: username, roomN: roomname, admin: adminYN})
+	}
+
+	if userd[0].admin == "0" {
+		return false
+	} else {
+		return true
+	}
 }

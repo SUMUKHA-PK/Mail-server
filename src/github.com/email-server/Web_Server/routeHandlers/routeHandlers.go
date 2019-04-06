@@ -56,7 +56,6 @@ func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 		} else {
 
 		}
-
 	} else if r.URL.Path == "/loggedin.html" {
 		user, val := sessionHandler.CheckActiveSession(r)
 		if val {
@@ -66,7 +65,6 @@ func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 		} else {
 
 		}
-
 	} else if r.URL.Path == "/logout" {
 		LogoutHandler(w, r)
 		log.Print("Routed to Home page on logout\n")
@@ -80,7 +78,6 @@ func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 		} else {
 
 		}
-
 	} else if r.URL.Path == "/createRoom" || r.URL.Path == "/createRoom.html" {
 		log.Print("Routed to room creation page\n")
 		RoomCreationHandler(w, r)
@@ -92,7 +89,6 @@ func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 		} else {
 
 		}
-
 	} else if r.URL.Path == "/rooms" || r.URL.Path == "/rooms.html" {
 		user, val := sessionHandler.CheckActiveSession(r)
 		if val {
@@ -101,10 +97,12 @@ func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 		} else {
 
 		}
-
 	} else if r.URL.Path == "/userRoom.html" {
-		log.Print("Routed to user room page\n")
-		RenderUserRoom(w, r)
+		user, val := sessionHandler.CheckActiveSession(r)
+		if val {
+			log.Print("Routed to user room page\n")
+			RenderUserRoom(w, r, user)
+		}
 	} else {
 		w.WriteHeader(http.StatusNotFound) // Status code 404
 		fmt.Fprint(w, "<h1>Error 404 : Page not found</h1>")
