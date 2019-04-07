@@ -36,9 +36,13 @@ func RoomHandler(w http.ResponseWriter, r *http.Request, user []util.UserData) {
 
 	email_body := util.GetString(r.Form["body"])
 
-	DB.AddDataToDB(Room.RoomName, user[0].UserName, email_body)
+	err := DB.AddDataToDB(Room.RoomName, user[0].UserName, email_body)
 
-	renderRoomData(w, r, Room.RoomName, user)
+	if err == nil {
+		renderRoomData(w, r, Room.RoomName, user)
+	} else {
+		fmt.Println("WWW")
+	}
 }
 
 type Emails struct {
@@ -67,27 +71,31 @@ func renderRoomData(w http.ResponseWriter, r *http.Request, roomName string, use
 
 	var emails []Emails
 
-	rows := DB.GetRoomData(roomName)
+	rows, err := DB.GetRoomData(roomName)
 
-	for rows.Next() {
-		err = rows.Scan(&body, &from_addr)
-		if err != nil {
-			log.Println(err)
-			http.Error(w, "there was an error", http.StatusInternalServerError)
-			return
+	if err == nil {
+		for rows.Next() {
+			err = rows.Scan(&body, &from_addr)
+			if err != nil {
+				log.Println(err)
+				http.Error(w, "there was an error", http.StatusInternalServerError)
+				return
+			}
+			emails = append(emails, Emails{Body: body, From_addr: from_addr})
 		}
-		emails = append(emails, Emails{Body: body, From_addr: from_addr})
-	}
-	fmt.Println(emails)
-	if DB.CheckAdmin(user, roomName) {
-		template.ExecuteTemplate(w, "room.html", emails)
+		fmt.Println(emails)
+		if DB.CheckAdmin(user, roomName) {
+			template.ExecuteTemplate(w, "room.html", emails)
+		} else {
+			template.ExecuteTemplate(w, "room_na.html", emails)
+		}
 	} else {
-		template.ExecuteTemplate(w, "room_na.html", emails)
+		// util.RenderPage(w, "../webpages/static/rooms.html")
+		RenderRoomChoicePage(w, r, user, 1)
 	}
-
 }
 
-func RenderRoomChoicePage(w http.ResponseWriter, r *http.Request, user []util.UserData) {
+func RenderRoomChoicePage(w http.ResponseWriter, r *http.Request, user []util.UserData, x int) {
 	var template *template.Template
 	template, err := template.ParseGlob("../webpages/static/*.html")
 
@@ -111,7 +119,11 @@ func RenderRoomChoicePage(w http.ResponseWriter, r *http.Request, user []util.Us
 		rooms = append(rooms, RoomsUser{Rooms: rName})
 	}
 	fmt.Println(rooms)
-	template.ExecuteTemplate(w, "rooms.html", rooms)
+	if x == 0 {
+		template.ExecuteTemplate(w, "rooms.html", rooms)
+	} else {
+		template.ExecuteTemplate(w, "rooms1.html", rooms)
+	}
 }
 
 func RenderUserRoom(w http.ResponseWriter, r *http.Request, user []util.UserData) {

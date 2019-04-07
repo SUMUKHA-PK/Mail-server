@@ -67,18 +67,16 @@ func GetUserData(username string) *sql.Rows {
 }
 
 // GetRoomData gives all the emails in the room for the given roomName
-func GetRoomData(roomName string) *sql.Rows {
+func GetRoomData(roomName string) (*sql.Rows, error) {
 	dbPass := authorisation.ObtainPass()
 	pass := "root:" + dbPass + "@/credentials"
 	db, err := sql.Open("mysql", pass)
 	errorHandler.ErrorHandler(err)
 
 	data := "SELECT * FROM " + roomName
-
 	rows, err := db.Query(data)
-	errorHandler.ErrorHandler(err)
 
-	return rows
+	return rows, err
 }
 
 // GetRoomsUser gives the rooms associated with the user

@@ -85,7 +85,7 @@ func CheckActiveSession(ID string) ([]util.UserData, error) {
 	fmt.Println(query)
 	rows, err := db.Query(query)
 
-	defer rows.Close()
+	// defer rows.Close()
 
 	var user []util.UserData
 

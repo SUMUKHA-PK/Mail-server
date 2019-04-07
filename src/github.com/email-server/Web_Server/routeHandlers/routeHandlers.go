@@ -93,7 +93,7 @@ func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 		user, val := sessionHandler.CheckActiveSession(r)
 		if val {
 			log.Print("Routed to room page\n")
-			RenderRoomChoicePage(w, r, user)
+			RenderRoomChoicePage(w, r, user, 0)
 		} else {
 
 		}

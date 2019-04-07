@@ -47,7 +47,7 @@ func RemoveUserData(userID string, loggedIn string, username string) {
 	errorHandler.ErrorHandler(err)
 }
 
-func AddDataToDB(roomName string, username string, data string) {
+func AddDataToDB(roomName string, username string, data string) error {
 	dbPass := authorisation.ObtainPass()
 	pass := "root:" + dbPass + "@/credentials"
 	db, err := sql.Open("mysql", pass)
@@ -57,5 +57,5 @@ func AddDataToDB(roomName string, username string, data string) {
 
 	fmt.Println(sessionData)
 	_, err = db.Exec(sessionData)
-	errorHandler.ErrorHandler(err)
+	return err
 }

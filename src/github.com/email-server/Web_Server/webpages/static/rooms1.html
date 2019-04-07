@@ -1,0 +1,37 @@
+<html>
+    <head>
+        <title>My rooms!</title>
+    </head>
+
+    <body>
+        <p>Re enter room name, chosen room doesnt exist!</p>
+        <p>Available rooms: </p>
+        <div class="pv4 pv2-ns ph2 bg-light-gray overflow-y-scroll w-70-ns"  style="background-image: linear-gradient(to right, rgb(225, 28, 117), rgb(226, 236, 24)">
+                <blockquote class="lh-copy">
+                    <table >
+                        <thead>
+                        <tr>
+                            <th scope="col">Rooms</th>
+                        </tr>
+                        </thead>
+    
+                        <tbody>
+                        {{ range . }}
+                        <tr>
+                            <td>{{ .Rooms }}</td>
+                        </tr>
+                        {{ end }}
+                        </tbody>
+                    </table>
+                </blockquote>
+    
+            </div>
+        <form action="/userRoom.html" method="post">
+            <p> Room you want to enter: 
+                <input type="text" name="roomName" size="40" maxlength="30" />
+            </p>
+
+            <input type="submit" name="enter" value="Enter!"/>
+        </form>
+    </body>
+</html>
