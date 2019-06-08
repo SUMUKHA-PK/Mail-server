@@ -13,7 +13,7 @@ import (
 
 func RoomCreationHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		util.RenderPage(w, "../webpages/static/createRoom.html")
+		util.RenderPage(w, "webpages/static/createRoom.html")
 	} else if r.Method == "POST" {
 		r.ParseForm()
 
@@ -23,10 +23,10 @@ func RoomCreationHandler(w http.ResponseWriter, r *http.Request) {
 
 		err := DataBase.CreateRoom(Room)
 		if err != nil {
-			util.RenderPage(w, "../webpages/static/createRoomErr.html")
+			util.RenderPage(w, "webpages/static/createRoomErr.html")
 		} else {
 			fmt.Println(Room)
-			util.RenderPage(w, "../webpages/static/room.html")
+			util.RenderPage(w, "webpages/static/room.html")
 		}
 	}
 }
@@ -62,7 +62,7 @@ type Rooms struct {
 
 func renderRoomData(w http.ResponseWriter, r *http.Request, roomName string, user []util.UserData) {
 	var template *template.Template
-	template, err := template.ParseGlob("../webpages/static/*.html")
+	template, err := template.ParseGlob("webpages/static/*.html")
 
 	errorHandler.ErrorHandler(err)
 
@@ -90,14 +90,14 @@ func renderRoomData(w http.ResponseWriter, r *http.Request, roomName string, use
 			template.ExecuteTemplate(w, "room_na.html", emails)
 		}
 	} else {
-		// util.RenderPage(w, "../webpages/static/rooms.html")
+		// util.RenderPage(w, "webpages/static/rooms.html")
 		RenderRoomChoicePage(w, r, user, 1)
 	}
 }
 
 func RenderRoomChoicePage(w http.ResponseWriter, r *http.Request, user []util.UserData, x int) {
 	var template *template.Template
-	template, err := template.ParseGlob("../webpages/static/*.html")
+	template, err := template.ParseGlob("webpages/static/*.html")
 
 	errorHandler.ErrorHandler(err)
 

@@ -14,7 +14,7 @@ import (
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET" {
-		util.RenderPage(w, "../webpages/authentication/login.html")
+		util.RenderPage(w, "webpages/authentication/login.html")
 	} else if r.Method == "POST" {
 		r.ParseForm()
 
@@ -30,7 +30,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(sessionVar)
 			sessionHandler.SessionHandlerNew(w, r, User.UserName, "1")
 		} else {
-			util.RenderPage(w, "../webpages/static/loginfail.html")
+			util.RenderPage(w, "webpages/static/loginfail.html")
 		}
 	}
 }

@@ -25,7 +25,7 @@ func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 			sessionVar := sessionHandler.GetActiveSession(user[0].UserName)
 			sessionHandler.SessionHandlerNew(w, r, sessionVar.UserName, "1")
 		} else {
-			util.RenderPage(w, "../webpages/static/index.html")
+			util.RenderPage(w, "webpages/static/index.html")
 			log.Print("Routed to Home page\n")
 		}
 	} else if r.URL.Path == "/login.html" || r.URL.Path == "/login" {
@@ -35,7 +35,7 @@ func HandlerFunc(w http.ResponseWriter, r *http.Request) {
 		SignupHandler(w, r)
 		log.Print("Routed to Signup page\n")
 	} else if r.URL.Path == "/compose.html" {
-		util.RenderPage(w, "../webpages/static/compose.html")
+		util.RenderPage(w, "webpages/static/compose.html")
 		log.Print("Routed to Compose page\n")
 	} else if r.URL.Path == "/compose" {
 		user, val := sessionHandler.CheckActiveSession(r)

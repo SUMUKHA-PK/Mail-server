@@ -44,7 +44,7 @@ along with managing the current session(Time outs, give user data to the invokin
 func SessionHandlerNew(w http.ResponseWriter, r *http.Request, username string, decider string) {
 
 	var template *template.Template
-	template, err := template.ParseGlob("../webpages/static/*.html")
+	template, err := template.ParseGlob("webpages/static/*.html")
 
 	errorHandler.ErrorHandler(err)
 

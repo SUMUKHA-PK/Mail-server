@@ -13,5 +13,5 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	if user != nil && val {
 		sessionHandler.DestroySession(w, user)
 	}
-	util.RenderPage(w, "../webpages/static/index.html")
+	util.RenderPage(w, "webpages/static/index.html")
 }

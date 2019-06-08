@@ -10,7 +10,7 @@ import (
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET" {
-		util.RenderPage(w, "../webpages/authentication/signup.html")
+		util.RenderPage(w, "webpages/authentication/signup.html")
 	} else if r.Method == "POST" {
 
 		r.ParseForm()
@@ -21,7 +21,7 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 		User.Auth = false
 
 		User.OTP = authentication.GenerateOTP()
-		util.RenderPage(w, "../webpages/authentication/otp.html")
+		util.RenderPage(w, "webpages/authentication/otp.html")
 	}
 }
 
@@ -30,9 +30,9 @@ func signupHelper(username string, password string, phno string, w http.Response
 		x := authentication.Authentication(User.UserName, User.Password, 0)
 
 		if x == 1 {
-			util.RenderPage(w, "../webpages/static/signupLogin.html")
+			util.RenderPage(w, "webpages/static/signupLogin.html")
 		} else {
-			util.RenderPage(w, "../webpages/static/signupFail.html")
+			util.RenderPage(w, "webpages/static/signupFail.html")
 		}
 	} else {
 		//Not sure
@@ -42,7 +42,7 @@ func signupHelper(username string, password string, phno string, w http.Response
 func VerifyAndRoute(username string, password string, phno string, w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET" {
-		util.RenderPage(w, "../webpages/authentication/otp.html")
+		util.RenderPage(w, "webpages/authentication/otp.html")
 	} else if r.Method == "POST" {
 		r.ParseForm()
 		otpUser := util.GetString(r.Form["otp"])
@@ -51,7 +51,7 @@ func VerifyAndRoute(username string, password string, phno string, w http.Respon
 			User.Auth = true
 			signupHelper(username, password, phno, w, r)
 		} else {
-			util.RenderPage(w, "../webpages/static/otpFail.html")
+			util.RenderPage(w, "webpages/static/otpFail.html")
 		}
 	}
 }
