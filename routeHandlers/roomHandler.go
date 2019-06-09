@@ -8,6 +8,7 @@ import (
 
 	"github.com/SUMUKHA-PK/Mail-Server/DataBase"
 	"github.com/SUMUKHA-PK/Mail-Server/errorHandler"
+	"github.com/SUMUKHA-PK/Mail-Server/sessionHandler"
 	"github.com/SUMUKHA-PK/Mail-Server/util"
 )
 
@@ -31,7 +32,35 @@ func RoomCreationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func RoomHandler(w http.ResponseWriter, r *http.Request, user []util.UserData) {
+func RoomHandler(w http.ResponseWriter, r *http.Request) {
+	user, val := sessionHandler.CheckActiveSession(r)
+	if val {
+		log.Print("Routed to room page\n")
+		RenderRoomData(w, r, user)
+	} else {
+
+	}
+}
+
+func RoomsHandler(w http.ResponseWriter, r *http.Request) {
+	user, val := sessionHandler.CheckActiveSession(r)
+	if val {
+		log.Print("Routed to room page\n")
+		RenderRoomChoicePage(w, r, user, 0)
+	} else {
+
+	}
+}
+
+func UserRoomHandler(w http.ResponseWriter, r *http.Request) {
+	user, val := sessionHandler.CheckActiveSession(r)
+	if val {
+		log.Print("Routed to user room page\n")
+		RenderUserRoom(w, r, user)
+	}
+}
+
+func RenderRoomData(w http.ResponseWriter, r *http.Request, user []util.UserData) {
 	r.ParseForm()
 
 	email_body := util.GetString(r.Form["body"])
